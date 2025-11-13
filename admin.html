@@ -1,631 +1,283 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Special Request - Admin Panel</title>
+  <!DOCTYPE html>
+  <html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Octobull Special Request</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(90deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: white;
-        }
-
-        .logo {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .title-text h1 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .title-text p {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        .logout-btn {
-            background: #dc2626;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: #b91c1c;
-            transform: translateY(-1px);
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        /* Card */
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f3f4f6;
-        }
-
-        .card-icon {
-            background: #f97316;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .card-header h2 {
-            font-size: 20px;
-            color: #1f2937;
-        }
-
-        /* Filter Section */
-        .filter-section {
-            margin-bottom: 20px;
-        }
-
-        .filter-label {
-            color: #dc2626;
-            font-weight: 600;
-            margin-bottom: 10px;
-            display: block;
-            font-size: 14px;
-        }
-
-        .filter-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .filter-select {
-            flex: 1;
-            min-width: 250px;
-            padding: 12px 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: white;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
-        }
-
-        .btn-success {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #059669;
-            transform: translateY(-1px);
-        }
-
-        /* Table */
-        .table-container {
-            overflow-x: auto;
-            margin-top: 20px;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1200px;
-        }
-
-        thead {
-            background: #f97316;
-            color: white;
-        }
-
-        th {
-            padding: 15px 12px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 13px;
-            white-space: nowrap;
-            border-right: 1px solid rgba(255,255,255,0.1);
-        }
-
-        th:last-child {
-            border-right: none;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #e5e7eb;
-            transition: all 0.2s;
-        }
-
-        tbody tr:hover {
-            background: #f9fafb;
-        }
-
-        tbody tr:nth-child(even) {
-            background: #fef2f2;
-        }
-
-        tbody tr:nth-child(even):hover {
-            background: #fee2e2;
-        }
-
-        td {
-            padding: 12px;
-            font-size: 13px;
-            color: #374151;
-            vertical-align: middle;
-        }
-
-        /* Store Column - Single Line */
-        .store-cell {
-            white-space: nowrap;
-            font-weight: 500;
-            max-width: 180px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Item Name - Better handling */
-        .item-name {
-            font-weight: 600;
-            color: #1f2937;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 200px;
-        }
-
-        /* Quantity Badge */
-        .qty-badge {
-            display: inline-block;
-            background: #3b82f6;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            text-align: center;
-            min-width: 50px;
-        }
-
-        /* Category - Plain Text (NO BUBBLE) */
-        .category-text {
-            font-size: 13px;
-            color: #1f2937;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 200px;
-        }
-
-        /* Status Dropdown */
-        .status-select {
-            padding: 8px 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            background: white;
-            min-width: 100px;
-        }
-
-        /* Feedback Input */
-        .feedback-input {
-            padding: 8px 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 12px;
-            width: 100%;
-            max-width: 150px;
-        }
-
-        .feedback-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-        }
-
-        /* Date Column */
-        .date-text {
-            font-size: 12px;
-            color: #6b7280;
-            white-space: nowrap;
-        }
-
-        /* Save Button */
-        .btn-save {
-            background: #f97316;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-
-        .btn-save:hover {
-            background: #ea580c;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header {
-                padding: 12px 15px;
-            }
-
-            .header-title h1 {
-                font-size: 16px;
-            }
-
-            .container {
-                padding: 0 10px;
-                margin: 20px auto;
-            }
-
-            .card {
-                padding: 15px;
-            }
-
-            .filter-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-select {
-                min-width: 100%;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
+      /* Octobull Theme Colors: Orange (#FF6B35), Blue (#004E89), White (#FFFFFF) */
+      .octobull-gradient-header {
+        background: linear-gradient(135deg, #004E89 0%, #1A659E 50%, #FF6B35 100%);
+      }
+      .octobull-gradient-orange {
+        background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+      }
+      .octobull-gradient-blue {
+        background: linear-gradient(135deg, #1A659E 0%, #004E89 100%);
+      }
+      .octobull-bg {
+        background: linear-gradient(to bottom right, #f0f9ff 0%, #ffffff 50%, #fff7ed 100%);
+      }
+      .card-shadow {
+        box-shadow: 0 10px 40px rgba(0, 78, 137, 0.15);
+      }
+      .card-hover:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 50px rgba(255, 107, 53, 0.25);
+        transition: all 0.3s ease;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fadeIn { animation: fadeIn 0.5s ease-out; }
+      .octobull-border {
+        border: 2px solid #e0f2fe;
+      }
+      .octobull-btn-orange {
+        background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+        transition: all 0.3s ease;
+      }
+      .octobull-btn-orange:hover {
+        background: linear-gradient(135deg, #FF6B35 0%, #F94144 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
+      }
+      .octobull-btn-blue {
+        background: linear-gradient(135deg, #1A659E 0%, #004E89 100%);
+        transition: all 0.3s ease;
+      }
+      .octobull-btn-blue:hover {
+        background: linear-gradient(135deg, #004E89 0%, #003566 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 78, 137, 0.4);
+      }
+      .octobull-table-header {
+        background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+        color: #004E89;
+        font-weight: 700;
+      }
+      .octobull-status-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .status-pending { 
+        background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%); 
+        color: white;
+      }
+      .status-approved { 
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+        color: white;
+      }
+      .status-rejected { 
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
+        color: white;
+      }
+      .octobull-logo {
+        font-family: 'Arial Black', sans-serif;
+        font-weight: 900;
+        font-size: 24px;
+        background: linear-gradient(135deg, #FF6B35 0%, #FFA500 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 2px 2px 4px rgba(255, 107, 53, 0.2);
+      }
     </style>
-</head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <div class="header-title">
-            <div class="logo">🐘</div>
-            <div class="title-text">
-                <h1>Special Request - Admin Panel</h1>
-                <p>🚀 Oktoberfest Management System</p>
-            </div>
+  </head>
+  <body class="octobull-bg min-h-screen text-gray-800">
+
+    <!-- HEADER -->
+    <div class="octobull-gradient-header text-white px-6 py-5 flex justify-between items-center shadow-xl">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 bg-white/20 rounded-2xl backdrop-blur-sm flex items-center justify-center shadow-lg">
+          <i class="fas fa-chart-line text-3xl text-white"></i>
         </div>
-        <button class="logout-btn">🚪 Logout</button>
+        <div>
+          <h1 class="text-2xl font-bold tracking-wide">OCTOBULL</h1>
+          <p class="text-sm text-white/90 font-medium">Admin Panel - Special Request Management</p>
+        </div>
+      </div>
+      <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-5 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </button>
     </div>
 
-    <!-- Main Container -->
-    <div class="container">
-        <div class="card">
-            <!-- Card Header -->
-            <div class="card-header">
-                <div class="card-icon">📋</div>
-                <h2>Daftar Request Per Item</h2>
-            </div>
-
-            <!-- Filter Section -->
-            <div class="filter-section">
-                <label class="filter-label">▼ Filter Kategori</label>
-                <div class="filter-controls">
-                    <select class="filter-select" id="categoryFilter">
-                        <option value="">Semua Kategori</option>
-                        <option value="ARISYANTI PRIMA NUGRAHESTI">ARISYANTI PRIMA NUGRAHESTI</option>
-                        <option value="PUTRI JEANE">PUTRI JEANE</option>
-                        <option value="OKTAVIA FAJAR INAYAH">OKTAVIA FAJAR INAYAH</option>
-                        <option value="HARFIANA ASHARI">HARFIANA ASHARI</option>
-                        <option value="INDRA RESSY OCTAVIANI">INDRA RESSY OCTAVIANI</option>
-                    </select>
-                    <button class="btn btn-primary" onclick="applyFilter()">🔄 Tampilkan</button>
-                    <button class="btn btn-success" onclick="exportToExcel()">📊 Export XLSX</button>
-                </div>
-            </div>
-
-            <!-- Table -->
-            <div class="table-container">
-                <table id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>📝 Ticket ID</th>
-                            <th>🏪 Store</th>
-                            <th>🔖 Item ID</th>
-                            <th>📦 Item Name</th>
-                            <th>🔢 Qty.</th>
-                            <th>💬 Remarks</th>
-                            <th>🏷️ Category</th>
-                            <th>📊 Status</th>
-                            <th>💭 Feedback</th>
-                            <th>📅 Created At</th>
-                            <th>⚙️ Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>T202511131555142</td>
-                            <td class="store-cell" title="APOTEK AI PRO ESPANA KARAWACI">APOTEK AI PRO ESPANA KARAWACI</td>
-                            <td>0102319</td>
-                            <td class="item-name" title="(AJH) VIAGRA 100MG 1X4S">(AJH) VIAGRA 100MG 1X4S</td>
-                            <td><span class="qty-badge">100</span></td>
-                            <td>pesanan</td>
-                            <td class="category-text" title="ARISYANTI PRIMA NUGRAHESTI">ARISYANTI PRIMA NUGRAHESTI</td>
-                            <td>
-                                <select class="status-select">
-                                    <option>Received</option>
-                                    <option>Processing</option>
-                                    <option>Completed</option>
-                                </select>
-                            </td>
-                            <td><input type="text" class="feedback-input" placeholder="Feedback..."></td>
-                            <td class="date-text">13/11/2025<br>15:51:42</td>
-                            <td><button class="btn-save" onclick="saveRow(this)">💾 Save</button></td>
-                        </tr>
-                        <tr>
-                            <td>T202511131555142</td>
-                            <td class="store-cell" title="APOTEK AI PRO ESPANA KARAWACI">APOTEK AI PRO ESPANA KARAWACI</td>
-                            <td>0106412</td>
-                            <td class="item-name" title="(AJH) CIALIS 10MG 1X4S">(AJH) CIALIS 10MG 1X4S</td>
-                            <td><span class="qty-badge">20</span></td>
-                            <td>pesanan</td>
-                            <td class="category-text" title="ARISYANTI PRIMA NUGRAHESTI">ARISYANTI PRIMA NUGRAHESTI</td>
-                            <td>
-                                <select class="status-select">
-                                    <option>Approved</option>
-                                    <option>Processing</option>
-                                    <option>Completed</option>
-                                </select>
-                            </td>
-                            <td><input type="text" class="feedback-input" placeholder="Feedback..."></td>
-                            <td class="date-text">13/11/2025<br>15:51:42</td>
-                            <td><button class="btn-save" onclick="saveRow(this)">💾 Save</button></td>
-                        </tr>
-                        <tr>
-                            <td>T202511131555641</td>
-                            <td class="store-cell" title="APOTEK AI PRO BANJAR WIJAYA">APOTEK AI PRO BANJAR WIJAYA</td>
-                            <td>0900547</td>
-                            <td class="item-name" title="DUREX PLAY FEEL LUBRICANTS 50ML">DUREX PLAY FEEL LUBRICANTS 50ML</td>
-                            <td><span class="qty-badge">10</span></td>
-                            <td>5</td>
-                            <td class="category-text" title="OKTAVIA FAJAR INAYAH">OKTAVIA FAJAR INAYAH</td>
-                            <td>
-                                <select class="status-select">
-                                    <option>Approved</option>
-                                    <option>Processing</option>
-                                    <option>Completed</option>
-                                </select>
-                            </td>
-                            <td><input type="text" class="feedback-input" placeholder="Feedback..."></td>
-                            <td class="date-text">13/11/2025<br>15:56:41</td>
-                            <td><button class="btn-save" onclick="saveRow(this)">💾 Save</button></td>
-                        </tr>
-                        <tr>
-                            <td>T202511131556541</td>
-                            <td class="store-cell" title="APOTEK AI PRO">APOTEK AI PRO</td>
-                            <td>0300555</td>
-                            <td class="item-name" title="SALONPAS GEL 15G">SALONPAS GEL 15G</td>
-                            <td><span class="qty-badge">10</span></td>
-                            <td>URGENT</td>
-                            <td class="category-text" title="HARFIANA ASHARI">HARFIANA ASHARI</td>
-                            <td>
-                                <select class="status-select">
-                                    <option>Pending</option>
-                                    <option>Processing</option>
-                                    <option>Completed</option>
-                                </select>
-                            </td>
-                            <td><input type="text" class="feedback-input" placeholder="Feedback..."></td>
-                            <td class="date-text">13/11/2025<br>15:56:54</td>
-                            <td><button class="btn-save" onclick="saveRow(this)">💾 Save</button></td>
-                        </tr>
-                        <tr>
-                            <td>T202511131557123</td>
-                            <td class="store-cell" title="APOTEK AI PRO MODERNLAND">APOTEK AI PRO MODERNLAND</td>
-                            <td>0100186</td>
-                            <td class="item-name" title="ARCALION 200MG TAB 10X6S">ARCALION 200MG TAB 10X6S</td>
-                            <td><span class="qty-badge">30</span></td>
-                            <td>regular order</td>
-                            <td class="category-text" title="PUTRI JEANE">PUTRI JEANE</td>
-                            <td>
-                                <select class="status-select">
-                                    <option>Received</option>
-                                    <option>Processing</option>
-                                    <option>Completed</option>
-                                </select>
-                            </td>
-                            <td><input type="text" class="feedback-input" placeholder="Feedback..."></td>
-                            <td class="date-text">13/11/2025<br>15:57:12</td>
-                            <td><button class="btn-save" onclick="saveRow(this)">💾 Save</button></td>
-                        </tr>
-                        <tr>
-                            <td>T202511131558234</td>
-                            <td class="store-cell" title="APOTEK AI PRO GADING SERPONG">APOTEK AI PRO GADING SERPONG</td>
-                            <td>0100581</td>
-                            <td class="item-name" title="CAPSUL KOSONG NO.0 250S">CAPSUL KOSONG NO.0 250S</td>
-                            <td><span class="qty-badge">50</span></td>
-                            <td>stock habis</td>
-                            <td class="category-text" title="INDRA RESSY OCTAVIANI">INDRA RESSY OCTAVIANI</td>
-                            <td>
-                                <select class="status-select">
-                                    <option>Processing</option>
-                                    <option>Hold</option>
-                                    <option>Completed</option>
-                                </select>
-                            </td>
-                            <td><input type="text" class="feedback-input" placeholder="Feedback..."></td>
-                            <td class="date-text">13/11/2025<br>15:58:23</td>
-                            <td><button class="btn-save" onclick="saveRow(this)">💾 Save</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    <!-- MAIN -->
+    <div class="p-6 max-w-7xl mx-auto animate-fadeIn">
+      <div class="bg-white rounded-2xl shadow-xl p-8 mb-6 octobull-border card-hover">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 octobull-gradient-orange rounded-xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-list-alt text-white text-xl"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800">Daftar Request Per Item</h2>
         </div>
+
+        <div class="mb-6 flex gap-4 flex-wrap items-end">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="fas fa-filter text-blue-600"></i> Filter Kategori
+            </label>
+            <select id="filterCategory" class="border-2 border-blue-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-orange-200 focus:border-orange-400 outline-none transition-all min-w-[200px]">
+              <option value="">Semua Kategori</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="fas fa-check-circle text-orange-600"></i> Filter Status
+            </label>
+            <select id="filterStatus" class="border-2 border-blue-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-orange-200 focus:border-orange-400 outline-none transition-all min-w-[200px]">
+              <option value="">Semua Status</option>
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+
+          <button onclick="loadItems()" class="octobull-btn-blue text-white px-6 py-3 rounded-xl font-semibold shadow-lg flex items-center gap-2">
+            <i class="fas fa-search"></i>
+            <span>Tampilkan</span>
+          </button>
+          
+          <button onclick="exportExcel()" class="octobull-btn-orange text-white px-6 py-3 rounded-xl font-semibold shadow-lg flex items-center gap-2">
+            <i class="fas fa-file-excel"></i>
+            <span>Export XLSX</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden octobull-border card-shadow">
+        <div class="overflow-auto">
+          <table class="w-full text-sm">
+            <thead class="octobull-table-header">
+              <tr>
+                <th class="p-4 border-b-2 border-blue-300"><i class="fas fa-ticket-alt mr-2"></i>Ticket ID</th>
+                <th class="p-4 border-b-2 border-blue-300"><i class="fas fa-store mr-2"></i>Store</th>
+                <th class="p-4 border-b-2 border-blue-300"><i class="fas fa-barcode mr-2"></i>Item ID</th>
+                <th class="p-4 border-b-2 border-blue-300"><i class="fas fa-box mr-2"></i>Item Name</th>
+                <th class="p-4 border-b-2 border-blue-300"><i class="fas fa-sort-numeric-up mr-2"></i>Qty</th>
+                <th class="p-4 border-b-2 border-blue-300"><i class="fas fa-comment-dots mr-2"></i>Remarks</th>
+                <th class="p-4 border-b-2 border-blue-300"><i class="fas fa-tags mr-2"></i>Category</th>
+                <th class="p-4 border-b-2 border-blue-300"><i class="fas fa-info-circle mr-2"></i>Status</th>
+                <th class="p-4 border-b-2 border-blue-300"><i class="fas fa-comment mr-2"></i>Feedback</th>
+                <th class="p-4 border-b-2 border-blue-300"><i class="fas fa-clock mr-2"></i>Created At</th>
+                <th class="p-4 border-b-2 border-blue-300"><i class="fas fa-cogs mr-2"></i>Action</th>
+              </tr>
+            </thead>
+            <tbody id="itemList"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <script>
-        // Apply filter functionality
-        function applyFilter() {
-            const filterValue = document.getElementById('categoryFilter').value;
-            const rows = document.querySelectorAll('#dataTable tbody tr');
-            
-            rows.forEach(row => {
-                const categoryCell = row.querySelector('.category-text');
-                const categoryText = categoryCell ? categoryCell.textContent.trim() : '';
-                
-                if (filterValue === '' || categoryText === filterValue) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-            
-            // Visual feedback
-            const btn = event.target;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '✅ Diterapkan!';
-            btn.style.background = '#10b981';
-            
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.background = '#3b82f6';
-            }, 1500);
-        }
+      const BASE_URL = "https://script.google.com/macros/s/AKfycby9VgDwNbtMeXGLMCG-eTpkAgSomw8JndpDxZ0NPS1NYb-iexn4Vaj1-9aIfAoxV2A9OA/exec"; 
+      let currentCategory = "";
+      let currentStatus = "";
 
-        // Save row functionality
-        function saveRow(button) {
-            const row = button.closest('tr');
-            const ticketId = row.querySelector('td:first-child').textContent;
-            const status = row.querySelector('.status-select').value;
-            const feedback = row.querySelector('.feedback-input').value;
-            
-            // Simulate save
-            button.textContent = '✅ Tersimpan!';
-            button.style.background = '#10b981';
-            
-            setTimeout(() => {
-                button.textContent = '💾 Save';
-                button.style.background = '#f97316';
-            }, 2000);
-            
-            console.log('Saving:', { ticketId, status, feedback });
-            
-            // Here you would normally send data to server
-            // fetch('/api/save', { method: 'POST', body: JSON.stringify({ ticketId, status, feedback }) })
-        }
-
-        // Export to Excel functionality
-        function exportToExcel() {
-            alert('📊 Fitur Export XLSX akan diimplementasikan dengan backend');
-            
-            // You can implement actual export using libraries like:
-            // - SheetJS (xlsx)
-            // - TableExport
-            // - Or server-side export
-        }
-
-        // Auto-apply filter on dropdown change
-        document.getElementById('categoryFilter').addEventListener('change', function() {
-            const filterValue = this.value;
-            const rows = document.querySelectorAll('#dataTable tbody tr');
-            
-            rows.forEach(row => {
-                const categoryCell = row.querySelector('.category-text');
-                const categoryText = categoryCell ? categoryCell.textContent.trim() : '';
-                
-                if (filterValue === '' || categoryText === filterValue) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+      async function loadCategories() {
+        const r = await fetch(`${BASE_URL}?action=getCategories`);
+        const data = await r.json();
+        const select = document.getElementById("filterCategory");
+        data.forEach(cat => {
+          select.innerHTML += `<option value="${cat}">${cat}</option>`;
         });
+      }
+
+      async function loadItems() {
+        const filterCategory = document.getElementById("filterCategory").value;
+        const filterStatus = document.getElementById("filterStatus").value;
+        currentCategory = filterCategory;
+        currentStatus = filterStatus;
+
+        const r = await fetch(`${BASE_URL}?action=getRequests&filter_category=${encodeURIComponent(filterCategory)}&filter_status=${encodeURIComponent(filterStatus)}`);
+        const data = await r.json();
+        const tbody = document.getElementById("itemList");
+        tbody.innerHTML = "";
+
+        data.forEach(it => {
+          const rowColor =
+            it.status === "Approved" ? "bg-green-50" :
+            it.status === "Rejected" ? "bg-red-50" :
+            "bg-orange-50";
+
+          tbody.innerHTML += `
+            <tr class="border-b hover:bg-blue-50 transition-colors ${rowColor}">
+              <td class="p-3 border-r font-semibold text-blue-700">${it.ticket_id}</td>
+              <td class="p-3 border-r">${it.store_name}</td>
+              <td class="p-3 border-r font-mono text-sm">${it.item_id}</td>
+              <td class="p-3 border-r font-medium">${it.item_name}</td>
+              <td class="p-3 border-r text-center font-bold text-orange-600">${it.qty}</td>
+              <td class="p-3 border-r text-gray-600">${it.remarks || "-"}</td>
+              <td class="p-3 border-r">
+                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">${it.category || "-"}</span>
+              </td>
+              <td class="p-3 border-r">
+                <select id="status_${it.ticket_id}_${it.item_id}" class="border-2 border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-orange-400 outline-none font-semibold text-sm">
+                  <option ${it.status==="Pending"?"selected":""}>Pending</option>
+                  <option ${it.status==="Approved"?"selected":""}>Approved</option>
+                  <option ${it.status==="Rejected"?"selected":""}>Rejected</option>
+                </select>
+              </td>
+              <td class="p-3 border-r">
+                <input id="fb_${it.ticket_id}_${it.item_id}" class="border-2 border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-400 outline-none" value="${it.feedback||""}" placeholder="Feedback admin..." />
+              </td>
+              <td class="p-3 border-r text-sm text-gray-600">${it.created_at}</td>
+              <td class="p-3 text-center">
+                <button class="octobull-btn-orange text-white px-4 py-2 rounded-lg font-semibold shadow-md flex items-center gap-2 mx-auto"
+                  onclick="updateItem('${it.ticket_id}','${it.item_id}')">
+                  <i class="fas fa-save"></i>
+                  <span>Save</span>
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      async function updateItem(ticket_id, item_id) {
+        const status = document.getElementById(`status_${ticket_id}_${item_id}`).value;
+        const feedback = document.getElementById(`fb_${ticket_id}_${item_id}`).value;
+
+        const form = new FormData();
+        form.append("action", "updateItemStatus");
+        form.append("ticket_id", ticket_id);
+        form.append("item_id", item_id);
+        form.append("status", status);
+        form.append("feedback", feedback);
+
+        const r = await fetch(BASE_URL, { method: "POST", body: form });
+        const j = await r.json();
+
+        if (j.success) {
+          alert("✅ Berhasil diperbarui!");
+          loadItems();
+        } else {
+          alert("❌ Gagal update item!");
+        }
+      }
+
+      async function exportExcel() {
+        let url = `${BASE_URL}?action=exportRequests`;
+        if (currentCategory) url += `&filter_category=${encodeURIComponent(currentCategory)}`;
+        if (currentStatus) url += `&filter_status=${encodeURIComponent(currentStatus)}`;
+        window.open(url, "_blank");
+      }
+
+      function logout() {
+        localStorage.clear();
+        window.location.href = "login.html";
+      }
+
+      loadCategories().then(loadItems);
     </script>
-</body>
-</html>
+  </body>
+  </html>
