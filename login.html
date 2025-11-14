@@ -3,368 +3,332 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login | Store Request</title>
+<title>Login | Procurement Portal</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
   
-  * {
-    font-family: 'Poppins', sans-serif;
+  * { font-family: 'Inter', sans-serif; }
+  
+  @keyframes slideUp { 
+    from { opacity: 0; transform: translateY(30px); } 
+    to { opacity: 1; transform: translateY(0); } 
+  }
+  @keyframes float { 
+    0%, 100% { transform: translateY(0px); } 
+    50% { transform: translateY(-20px); } 
+  }
+  @keyframes glow { 
+    0%, 100% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.3); } 
+    50% { box-shadow: 0 0 60px rgba(16, 185, 129, 0.6); } 
   }
   
-  /* Octobull Theme Colors */
-  :root {
-    --octobull-orange: #FF6B35;
-    --octobull-blue: #004E89;
-    --octobull-light-blue: #1A759F;
-    --octobull-white: #FFFFFF;
-    --octobull-light: #F7F9FC;
+  .animate-slideUp { animation: slideUp 0.8s ease-out; }
+  .animate-float { animation: float 3s ease-in-out infinite; }
+  .animate-glow { animation: glow 2s ease-in-out infinite; }
+  
+  .retail-gradient { 
+    background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
   }
   
-  /* Loading Animation */
-  .loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, var(--octobull-blue) 0%, var(--octobull-light-blue) 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease-out;
+  .card-gradient { 
+    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(249,250,251,0.95) 100%);
+    backdrop-filter: blur(20px);
   }
   
-  .loading-overlay.fade-out {
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  .octobull-loader {
-    position: relative;
-    width: 120px;
-    height: 120px;
-  }
-  
-  .octobull-circle {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 4px solid transparent;
-    border-top-color: var(--octobull-orange);
-    animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  }
-  
-  .octobull-circle:nth-child(2) {
-    border-top-color: var(--octobull-white);
-    animation-delay: -0.3s;
-    width: 80%;
-    height: 80%;
-    top: 10%;
-    left: 10%;
-  }
-  
-  .octobull-circle:nth-child(3) {
-    border-top-color: var(--octobull-orange);
-    animation-delay: -0.6s;
-    width: 60%;
-    height: 60%;
-    top: 20%;
-    left: 20%;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  .loading-text {
-    color: white;
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-top: 140px;
-    animation: pulse 1.5s ease-in-out infinite;
-  }
-  
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-  
-  /* Main Background */
-  .octobull-bg {
-    background: linear-gradient(135deg, var(--octobull-blue) 0%, var(--octobull-light-blue) 50%, var(--octobull-orange) 100%);
+  .procurement-bg {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
     position: relative;
     overflow: hidden;
   }
   
-  .octobull-bg::before {
+  .procurement-bg::before {
     content: '';
     position: absolute;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(255, 107, 53, 0.2) 0%, transparent 70%);
-    top: -250px;
-    right: -250px;
-    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    top: -200px;
+    right: -200px;
     animation: float 6s ease-in-out infinite;
   }
   
-  .octobull-bg::after {
+  .procurement-bg::after {
     content: '';
     position: absolute;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    bottom: -200px;
-    left: -200px;
-    border-radius: 50%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    bottom: -100px;
+    left: -100px;
     animation: float 8s ease-in-out infinite reverse;
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) scale(1); }
-    50% { transform: translateY(-20px) scale(1.05); }
-  }
-  
-  /* Card Design */
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  .login-card {
-    animation: fadeInUp 0.8s ease-out;
-    background: linear-gradient(145deg, #ffffff 0%, #f7f9fc 100%);
-    box-shadow: 
-      0 20px 60px rgba(0, 78, 137, 0.3),
-      0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-  }
-  
-  .octobull-logo {
-    width: 90px;
-    height: 90px;
-    background: linear-gradient(135deg, var(--octobull-orange) 0%, #FF8C5A 100%);
-    box-shadow: 
-      0 10px 30px rgba(255, 107, 53, 0.4),
-      0 0 0 4px rgba(255, 107, 53, 0.1);
-    animation: logoFloat 3s ease-in-out infinite;
-  }
-  
-  @keyframes logoFloat {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(5deg); }
-  }
-  
-  .octobull-title {
-    background: linear-gradient(135deg, var(--octobull-blue) 0%, var(--octobull-orange) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  /* Input Styles */
-  input {
-    transition: all 0.3s ease;
-    border: 2px solid #E5E7EB;
   }
   
   input:focus {
     transform: scale(1.02);
-    border-color: var(--octobull-orange);
-    box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
   }
   
-  /* Button Styles */
-  .btn-octobull {
-    background: linear-gradient(135deg, var(--octobull-orange) 0%, #FF8C5A 100%);
-    box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
-    transition: all 0.3s ease;
-  }
-  
-  .btn-octobull:hover {
+  button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(255, 107, 53, 0.4);
-    background: linear-gradient(135deg, #FF8C5A 0%, var(--octobull-orange) 100%);
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
   }
   
-  .btn-octobull:active {
-    transform: translateY(-1px);
+  .hidden-switch { display: none; }
+  
+  .icon-box {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
   }
   
-  .btn-reset {
-    background: linear-gradient(135deg, var(--octobull-blue) 0%, var(--octobull-light-blue) 100%);
-    box-shadow: 0 10px 25px rgba(0, 78, 137, 0.3);
-  }
-  
-  .btn-reset:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(0, 78, 137, 0.4);
-  }
-  
-  /* Reset Form Animation */
-  .reset-form-enter {
-    animation: slideDown 0.5s ease-out;
-  }
-  
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      max-height: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      max-height: 500px;
-      transform: translateY(0);
-    }
-  }
-  
-  .link-octobull {
-    color: var(--octobull-orange);
-    transition: all 0.3s ease;
-  }
-  
-  .link-octobull:hover {
-    color: var(--octobull-blue);
-    text-decoration: underline;
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #d1d5db 50%, transparent 100%);
+    margin: 2rem 0;
   }
 </style>
 </head>
-<body class="octobull-bg flex items-center justify-center min-h-screen">
 
-<!-- Loading Overlay -->
-<div class="loading-overlay" id="loadingOverlay">
-  <div style="text-align: center;">
-    <div class="octobull-loader">
-      <div class="octobull-circle"></div>
-      <div class="octobull-circle"></div>
-      <div class="octobull-circle"></div>
-    </div>
-    <div class="loading-text">Loading Octobull System...</div>
-  </div>
-</div>
+<body class="procurement-bg flex items-center justify-center min-h-screen p-4">
 
-<!-- Login Card -->
-<div class="login-card shadow-2xl rounded-3xl p-10 w-[450px] text-center backdrop-blur-sm relative z-10">
-  
-  <!-- Logo -->
-  <div class="mb-6">
-    <div class="octobull-logo mx-auto rounded-2xl flex items-center justify-center shadow-lg">
+<div class="card-gradient shadow-2xl rounded-3xl p-10 w-full max-w-md text-center animate-slideUp border border-white/30 relative z-10">
+
+  <!-- LOGO & BRANDING -->
+  <div class="mb-8">
+    <div class="mx-auto w-24 h-24 icon-box rounded-2xl flex items-center justify-center animate-float mb-4">
       <i class="fas fa-shopping-cart text-4xl text-white"></i>
     </div>
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Procurement Portal</h1>
+    <p class="text-sm text-gray-500 font-medium">Retail Store Request System</p>
   </div>
-  
-  <!-- Title -->
-  <h2 class="text-4xl font-bold mb-2 octobull-title">Octobull</h2>
-  <p class="text-gray-600 mb-8 text-base font-medium">Store Request System</p>
 
-  <!-- Login Form -->
-  <input id="store_code" type="text" placeholder="Kode Store" 
-    class="w-full mb-4 p-4 rounded-xl focus:outline-none text-gray-800 font-medium">
-  
-  <input id="password" type="password" placeholder="Password" 
-    class="w-full mb-6 p-4 rounded-xl focus:outline-none text-gray-800 font-medium">
-  
-  <button onclick="login()" 
-    class="btn-octobull w-full text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3">
-    <i class="fas fa-sign-in-alt"></i>
-    <span>Login</span>
-  </button>
-  
-  <p id="msg" class="text-sm text-red-500 mt-4 font-semibold"></p>
+  <!-- LOGIN FORM WRAPPER -->
+  <div id="loginWrapper">
+    <div class="text-left mb-6">
+      <h2 class="text-2xl font-bold text-gray-800 mb-1 flex items-center gap-2">
+        <i class="fas fa-sign-in-alt text-green-500"></i>
+        Masuk ke Sistem
+      </h2>
+      <p class="text-sm text-gray-500 ml-7">Silakan login untuk melanjutkan</p>
+    </div>
 
-  <!-- Reset Password Form -->
-  <div id="resetForm" class="hidden mt-6 border-t-2 border-gray-200 pt-6">
-    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center justify-center gap-2">
-      <i class="fas fa-key" style="color: var(--octobull-orange);"></i> 
-      Reset Password
-    </h3>
-    
-    <input id="reset_store" type="text" placeholder="Kode Store" 
-      class="w-full mb-3 p-3 rounded-xl focus:outline-none text-gray-800 text-sm">
-    
-    <input id="new_pass" type="password" placeholder="Password Baru" 
-      class="w-full mb-4 p-3 rounded-xl focus:outline-none text-gray-800 text-sm">
-    
-    <button onclick="resetPassword()" 
-      class="btn-reset w-full text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 text-sm">
+    <div class="space-y-4 mb-6">
+      <div class="relative">
+        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+          <i class="fas fa-store"></i>
+        </div>
+        <input 
+          id="store_code" 
+          type="text" 
+          placeholder="Kode Store" 
+          class="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-green-400 transition-all text-gray-700 font-medium"
+        >
+      </div>
+      
+      <div class="relative">
+        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+          <i class="fas fa-lock"></i>
+        </div>
+        <input 
+          id="password" 
+          type="password" 
+          placeholder="Password" 
+          class="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-green-400 transition-all text-gray-700 font-medium"
+        >
+      </div>
+    </div>
+
+    <button 
+      onclick="login()" 
+      class="w-full retail-gradient text-white py-4 rounded-xl transition-all font-bold text-lg flex items-center justify-center gap-3 shadow-lg hover:shadow-2xl mb-4"
+    >
+      <i class="fas fa-arrow-right"></i>
+      <span>Masuk Sekarang</span>
+    </button>
+
+    <p id="msg" class="text-sm text-red-500 font-semibold min-h-[20px]"></p>
+
+    <div class="divider"></div>
+
+    <button 
+      onclick="switchToReset()" 
+      class="text-sm text-green-600 hover:text-green-800 font-semibold hover:underline flex items-center justify-center gap-2 mx-auto"
+    >
+      <i class="fas fa-question-circle"></i>
+      <span>Lupa Password?</span>
+    </button>
+  </div>
+
+  <!-- RESET PASSWORD WRAPPER -->
+  <div id="resetWrapper" class="hidden-switch">
+    <div class="text-left mb-6">
+      <h3 class="text-2xl font-bold text-gray-800 mb-1 flex items-center gap-2">
+        <i class="fas fa-key text-amber-500"></i>
+        Reset Password
+      </h3>
+      <p class="text-sm text-gray-500 ml-7">Buat password baru untuk akun Anda</p>
+    </div>
+
+    <div class="space-y-4 mb-6">
+      <div class="relative">
+        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+          <i class="fas fa-store"></i>
+        </div>
+        <input 
+          id="reset_store" 
+          type="text" 
+          placeholder="Kode Store" 
+          class="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-amber-400 transition-all text-gray-700 font-medium"
+        >
+      </div>
+      
+      <div class="relative">
+        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+          <i class="fas fa-lock"></i>
+        </div>
+        <input 
+          id="new_pass" 
+          type="password" 
+          placeholder="Password Baru" 
+          class="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-amber-400 transition-all text-gray-700 font-medium"
+        >
+      </div>
+    </div>
+
+    <button 
+      onclick="resetPassword()" 
+      class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-4 rounded-xl transition-all font-bold text-lg flex items-center justify-center gap-3 shadow-lg hover:shadow-2xl mb-4"
+    >
       <i class="fas fa-sync-alt"></i>
       <span>Reset Password</span>
     </button>
-    
-    <p id="resetMsg" class="text-sm text-gray-600 mt-3 font-medium"></p>
+
+    <p id="resetMsg" class="text-sm text-gray-600 font-semibold min-h-[20px]"></p>
+
+    <div class="divider"></div>
+
+    <button 
+      onclick="switchToLogin()" 
+      class="text-sm text-green-600 hover:text-green-800 font-semibold hover:underline flex items-center justify-center gap-2 mx-auto"
+    >
+      <i class="fas fa-arrow-left"></i>
+      <span>Kembali ke Login</span>
+    </button>
   </div>
 
-  <!-- Forgot Password Link -->
-  <button onclick="showReset()" 
-    class="link-octobull mt-6 text-sm font-semibold flex items-center justify-center gap-2 mx-auto hover:gap-3 transition-all">
-    <i class="fas fa-question-circle"></i> 
-    Lupa Password?
-  </button>
+  <!-- FOOTER INFO -->
+  <div class="mt-8 pt-6 border-t border-gray-200">
+    <p class="text-xs text-gray-400 flex items-center justify-center gap-2">
+      <i class="fas fa-shield-alt"></i>
+      <span>Sistem Aman & Terenkripsi</span>
+    </p>
+  </div>
+
 </div>
 
 <script>
-// Hide loading overlay after page load
-window.addEventListener('load', function() {
-  setTimeout(() => {
-    document.getElementById('loadingOverlay').classList.add('fade-out');
-  }, 1000);
-});
+const BASE_URL = "https://script.google.com/macros/s/AKfycbylUW-XSL7i-hzFb6PjMmy_T-zYWUaZ8lnGpHsGUiklZ5mDQBo9zHJ8vJFfmwA5SMQNGQ/exec";
 
-const BASE_URL= "https://script.google.com/macros/s/AKfycbwkPR-kE4bLNDg6NxuY53z7W8YgSoXssbKploTjPG9Xj_uLTsUzz6quQuLKBZEdxCP18Q/exec";
-
-async function login(){
-  const store_code=document.getElementById("store_code").value.trim();
-  const password=document.getElementById("password").value.trim();
-  const msg=document.getElementById("msg");
-  if(!store_code||!password){msg.innerText="Isi kode store dan password!";return;}
-  try{
-    msg.innerText="Sedang memproses...";
-    const res=await fetch(`${BASE_URL}?action=login&store_code=${store_code}&password=${password}`);
-    const data=await res.json();
-    if(data.success){
-      localStorage.setItem("store_code",data.store_code);
-      localStorage.setItem("store_name",data.store_name);
-      localStorage.setItem("role",data.role);
-      msg.innerText="Login berhasil...";
-      setTimeout(()=>{if(data.role.toLowerCase()==="admin")window.location.href="admin.html";else window.location.href="request.html";},500);
-    }else msg.innerText=data.message;
-  }catch(err){msg.innerText="Terjadi kesalahan koneksi.";}
-}
-document.addEventListener("keypress",e=>{if(e.key==="Enter")login();});
-function showReset(){
-  const form = document.getElementById("resetForm");
-  form.classList.toggle("hidden");
-  if(!form.classList.contains("hidden")) {
-    form.classList.add("reset-form-enter");
+async function login() {
+  const store_code = document.getElementById("store_code").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const msg = document.getElementById("msg");
+  
+  if (!store_code || !password) {
+    msg.innerText = "⚠️ Isi kode store dan password!";
+    msg.className = "text-sm text-red-500 font-semibold min-h-[20px]";
+    return;
+  }
+  
+  try {
+    msg.innerText = "⏳ Sedang memproses...";
+    msg.className = "text-sm text-blue-500 font-semibold min-h-[20px]";
+    
+    const res = await fetch(`${BASE_URL}?action=login&store_code=${store_code}&password=${password}`);
+    const data = await res.json();
+    
+    if (data.success) {
+      localStorage.setItem("store_code", data.store_code);
+      localStorage.setItem("store_name", data.store_name);
+      localStorage.setItem("role", data.role);
+      
+      msg.innerText = "✅ Login berhasil! Mengalihkan...";
+      msg.className = "text-sm text-green-500 font-semibold min-h-[20px]";
+      
+      setTimeout(() => {
+        if (data.role.toLowerCase() === "admin") {
+          window.location.href = "admin.html";
+        } else {
+          window.location.href = "request.html";
+        }
+      }, 500);
+    } else {
+      msg.innerText = "❌ " + data.message;
+      msg.className = "text-sm text-red-500 font-semibold min-h-[20px]";
+    }
+  } catch (err) {
+    msg.innerText = "❌ Terjadi kesalahan koneksi.";
+    msg.className = "text-sm text-red-500 font-semibold min-h-[20px]";
   }
 }
 
-async function resetPassword(){
-  const store_code=document.getElementById("reset_store").value.trim();
-  const new_pass=document.getElementById("new_pass").value.trim();
-  const msg=document.getElementById("resetMsg");
-  if(!store_code||!new_pass)return msg.innerText="Isi kode store dan password baru!";
-  try{
-    const res = await fetch(BASE_URL,{
-      method:"POST",
-      headers:{"Content-Type":"application/x-www-form-urlencoded"},
-      body:new URLSearchParams({
-        action:"resetPassword",
+document.addEventListener("keypress", e => {
+  if (e.key === "Enter") login();
+});
+
+function switchToReset() {
+  document.getElementById("loginWrapper").classList.add("hidden-switch");
+  document.getElementById("resetWrapper").classList.remove("hidden-switch");
+  document.getElementById("msg").innerText = "";
+}
+
+function switchToLogin() {
+  document.getElementById("resetWrapper").classList.add("hidden-switch");
+  document.getElementById("loginWrapper").classList.remove("hidden-switch");
+  document.getElementById("resetMsg").innerText = "";
+}
+
+async function resetPassword() {
+  const store_code = document.getElementById("reset_store").value.trim();
+  const new_pass = document.getElementById("new_pass").value.trim();
+  const msg = document.getElementById("resetMsg");
+  
+  if (!store_code || !new_pass) {
+    msg.innerText = "⚠️ Isi kode store dan password baru!";
+    msg.className = "text-sm text-red-500 font-semibold min-h-[20px]";
+    return;
+  }
+  
+  try {
+    msg.innerText = "⏳ Memproses reset password...";
+    msg.className = "text-sm text-blue-500 font-semibold min-h-[20px]";
+    
+    const res = await fetch(BASE_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        action: "resetPassword",
         store_code,
         new_pass
       })
     });
-    const data=await res.json();
-    msg.innerText=data.message;
-  }catch(e){
-    msg.innerText="Terjadi kesalahan koneksi.";
+    
+    const data = await res.json();
+    
+    if (data.success) {
+      msg.innerText = "✅ " + data.message;
+      msg.className = "text-sm text-green-500 font-semibold min-h-[20px]";
+    } else {
+      msg.innerText = "❌ " + data.message;
+      msg.className = "text-sm text-red-500 font-semibold min-h-[20px]";
+    }
+  } catch (e) {
+    msg.innerText = "❌ Terjadi kesalahan koneksi.";
+    msg.className = "text-sm text-red-500 font-semibold min-h-[20px]";
   }
 }
 </script>
+
 </body>
 </html>
