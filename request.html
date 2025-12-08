@@ -677,10 +677,8 @@ function showTicketDetailInline(card, container, id, items) {
 }
 
 function logout() {
-  if (confirm("Yakin ingin keluar?")) {
-    localStorage.clear();
-    window.location.href = "login.html";
-  }
+   localStorage.clear();
+  window.location.href = "login.html";
 }
 
 // Initialize
