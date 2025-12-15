@@ -151,11 +151,9 @@
     .status-indicator.approved { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
     .status-indicator.rejected { background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
 
-    /* ========== FIXED: TAB STYLES ========== */
     .tab-button {
       transition: all 0.3s ease;
       position: relative;
-      /* FIXED: Tab inactive sekarang memiliki background gradient biru yang terlihat */
       background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
       color: white;
       border: 2px solid transparent;
@@ -167,7 +165,6 @@
       box-shadow: 0 6px 20px rgba(30, 64, 175, 0.3);
     }
     
-    /* FIXED: Tab active sekarang lebih kontras dengan background putih dan border biru */
     .tab-button.active {
       background: white;
       color: #1e40af;
@@ -197,7 +194,6 @@
       animation: fadeIn 0.5s ease-out;
     }
 
-    /* ========== DASHBOARD CARD STYLES ========== */
     .top10-card {
       background: white;
       border-radius: 1.25rem;
@@ -246,6 +242,131 @@
       border-radius: 10px;
       transition: width 1s ease-out;
     }
+
+    /* =====  AUTOCOMPLETE DROPDOWN STYLES ===== */
+    .autocomplete-container {
+      position: relative;
+    }
+
+    .autocomplete-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 2px solid #3b82f6;
+      border-top: none;
+      border-radius: 0 0 0.75rem 0.75rem;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 10px 40px rgba(30, 64, 175, 0.15);
+      display: none;
+    }
+
+    .autocomplete-dropdown.show {
+      display: block;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .autocomplete-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .autocomplete-item:hover {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      color: #1e40af;
+    }
+
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+
+    .autocomplete-item mark {
+      background: #fef3c7;
+      color: #92400e;
+      font-weight: 800;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .autocomplete-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #3b82f6;
+    }
+
+    .autocomplete-no-results {
+      padding: 16px;
+      text-align: center;
+      color: #9ca3af;
+      font-weight: 600;
+    }
+
+    .autocomplete-dropdown::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .autocomplete-dropdown::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    .autocomplete-dropdown::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+      border-radius: 10px;
+    }
+
+    /* SELECTED ITEMS TAGS */
+    .selected-items-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+      min-height: 32px;
+    }
+
+    .selected-item-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .selected-item-tag button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 0;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .selected-item-tag button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
   </style>
 </head>
 
@@ -278,7 +399,7 @@
     </div>
   </div>
 
-  <!-- ========== FIXED: TAB NAVIGATION dengan background yang terlihat ========== -->
+  <!-- TAB NAVIGATION -->
   <div class="max-w-full px-6 pt-6">
     <div class="inline-flex gap-3 animate-fadeIn">
       <button 
@@ -300,7 +421,7 @@
     </div>
   </div>
 
-  <!-- ========== DASHBOARD TAB CONTENT ========== -->
+  <!-- DASHBOARD TAB CONTENT -->
   <div id="contentDashboard" class="tab-content active max-w-full p-4 md:p-6 animate-fadeIn">
     
     <!-- DASHBOARD HEADER -->
@@ -331,7 +452,6 @@
           </div>
         </div>
         <div id="topStoreList" class="space-y-3">
-          <!-- Loading State -->
           <div class="animate-pulse-loading text-center py-8">
             <i class="fas fa-spinner fa-spin text-3xl text-blue-500 mb-2"></i>
             <p class="text-sm font-bold text-gray-600">Memuat data...</p>
@@ -351,7 +471,6 @@
           </div>
         </div>
         <div id="topCategoryList" class="space-y-3">
-          <!-- Loading State -->
           <div class="animate-pulse-loading text-center py-8">
             <i class="fas fa-spinner fa-spin text-3xl text-purple-500 mb-2"></i>
             <p class="text-sm font-bold text-gray-600">Memuat data...</p>
@@ -371,7 +490,6 @@
           </div>
         </div>
         <div id="topItemList" class="space-y-3">
-          <!-- Loading State -->
           <div class="animate-pulse-loading text-center py-8">
             <i class="fas fa-spinner fa-spin text-3xl text-green-500 mb-2"></i>
             <p class="text-sm font-bold text-gray-600">Memuat data...</p>
@@ -382,7 +500,7 @@
     </div>
   </div>
 
-  <!-- ========== ADMIN PANEL TAB CONTENT ========== -->
+  <!-- ADMIN PANEL TAB CONTENT -->
   <div id="contentAdmin" class="tab-content max-w-full p-4 md:p-6 animate-fadeIn">
     
     <!-- FILTERS & ACTIONS -->
@@ -394,7 +512,7 @@
         <h2 class="text-xl font-black text-gray-800">Filter & Export Data</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
         <!-- CATEGORY FILTER -->
         <div class="md:col-span-3">
           <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
@@ -426,8 +544,38 @@
           </select>
         </div>
 
+        <!--  ITEM NAME FILTER WITH AUTOCOMPLETE & MULTISELECT -->
+        <div class="md:col-span-3 autocomplete-container">
+          <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center justify-between">
+            <span class="flex items-center gap-2">
+              <i class="fas fa-box text-orange-500"></i>
+              <span>Cari Item Name</span>
+            </span>
+            <button 
+              onclick="clearSelectedItems()" 
+              class="text-xs text-red-500 hover:text-red-700 font-semibold"
+              id="clearSelectionBtn"
+              style="display: none;"
+            >
+              <i class="fas fa-times-circle mr-1"></i>Clear All
+            </button>
+          </label>
+          <input 
+            type="text"
+            id="filterItemName" 
+            placeholder="Ketik atau pilih item..."
+            autocomplete="off"
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all font-semibold text-gray-700"
+          />
+          <!--  DROPDOWN AUTOCOMPLETE -->
+          <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+        </div>
+
         <!-- BUTTONS -->
         <div class="md:col-span-3">
+          <label class="block text-sm font-bold text-gray-700 mb-2 opacity-0 pointer-events-none">
+            <span>Hidden</span>
+          </label>
           <button 
             onclick="loadItems()" 
             class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
@@ -436,8 +584,14 @@
             <span>Tampilkan Data</span>
           </button>
         </div>
+      </div>
 
-        <div class="md:col-span-3">
+      <!-- SELECTED ITEMS TAGS SECTION (MOVED OUTSIDE GRID) -->
+      <div id="selectedItemsContainer" class="selected-items-container mt-2"></div>
+
+      <!-- Row Kedua untuk Export Button -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mt-4">
+        <div class="md:col-span-3 md:col-start-10">
           <button 
             onclick="exportExcel()" 
             class="w-full bg-gradient-to-r from-green-500 to-green-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
@@ -546,58 +700,50 @@
   </div>
 
   <script>
-    const BASE_URL = "https://script.google.com/macros/s/AKfycbyvJsb99y4JNT9O85k0S2j4ZV0RFhP8EQZ7qUb0PO8Ck4wazIioWTDflU0hCT_ZvmIDjQ/exec";
+    const BASE_URL = "https://script.google.com/macros/s/AKfycbz9UeOEIJpSJvsvrccJAWIlPJjYmkOPqXZetmBsW-hoq1nLNr4afOxxWl8UqNApD2Pgqg/exec";
     
     let currentCategory = "";
     let currentStatus = "";
+    let selectedItemNames = []; // ✅ ARRAY UNTUK MENYIMPAN MULTIPLE ITEMS
     let allData = [];
     let currentPage = 1;
     const itemsPerPage = 20;
     let totalPages = 1;
+    
+    //  AUTOCOMPLETE DATA
+    let allItemNames = [];
 
-    // ========== TAB SWITCHING FUNCTION ==========
+    // TAB SWITCHING FUNCTION
     function switchTab(tabName) {
-      // Hide all tab contents
       document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
       });
       
-      // Remove active class from all tab buttons
       document.querySelectorAll('.tab-button').forEach(btn => {
         btn.classList.remove('active');
       });
       
-      // Show selected tab content
       document.getElementById('content' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
-      
-      // Add active class to selected tab button
       document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
       
-      // Load dashboard data when switching to dashboard tab
       if (tabName === 'dashboard') {
         loadDashboardData();
       }
     }
 
-    // ========== LOAD DASHBOARD DATA ==========
+    // LOAD DASHBOARD DATA
     async function loadDashboardData() {
       try {
         const response = await fetch(`${BASE_URL}?action=top10dashboard`);
         const data = await response.json();
         
-        // Render Top 10 Stores
         renderTop10(data.top_store, 'topStoreList', 'blue');
-        
-        // Render Top 10 Categories
         renderTop10(data.top_category, 'topCategoryList', 'purple');
-        
-        // Render Top 10 Items
         renderTop10(data.top_item, 'topItemList', 'green');
         
       } catch (error) {
         console.error('Failed to load dashboard data:', error);
         
-        // Show error state
         ['topStoreList', 'topCategoryList', 'topItemList'].forEach(id => {
           document.getElementById(id).innerHTML = `
             <div class="text-center py-8">
@@ -609,7 +755,7 @@
       }
     }
 
-    // ========== RENDER TOP 10 LIST ==========
+    // RENDER TOP 10 LIST
     function renderTop10(data, containerId, color) {
       const container = document.getElementById(containerId);
       
@@ -623,7 +769,6 @@
         return;
       }
       
-      // Find max count for progress bar calculation
       const maxCount = Math.max(...data.map(item => item.count));
       
       let html = '';
@@ -674,14 +819,14 @@
       }
     }
 
-    // Load Items with Filters
+    // ✅ LOAD ITEMS WITH MULTIPLE ITEM NAMES FILTER
     async function loadItems() {
       const filterCategory = document.getElementById("filterCategory").value;
       const filterStatus = document.getElementById("filterStatus").value;
+      
       currentCategory = filterCategory;
       currentStatus = filterStatus;
       
-      // Show loading state
       const tbody = document.getElementById("itemList");
       tbody.innerHTML = `
         <tr>
@@ -699,7 +844,21 @@
           `${BASE_URL}?action=getRequests&filter_category=${filterCategory}&filter_status=${filterStatus}`
         );
         
-        allData = await r.json();
+        let fetchedData = await r.json();
+        
+        //  POPULATE AUTOCOMPLETE LIST
+        populateItemNameList(fetchedData);
+        
+        // ✅ CLIENT-SIDE FILTER BY MULTIPLE ITEM NAMES
+        if (selectedItemNames.length > 0) {
+          fetchedData = fetchedData.filter(item => 
+            selectedItemNames.some(selected => 
+              item.item_name.toLowerCase().includes(selected.toLowerCase())
+            )
+          );
+        }
+        
+        allData = fetchedData;
         currentPage = 1;
         totalPages = Math.ceil(allData.length / itemsPerPage);
         
@@ -718,6 +877,159 @@
         `;
       }
     }
+
+    //  POPULATE ITEM NAME LIST FOR AUTOCOMPLETE
+    function populateItemNameList(data) {
+      const uniqueItems = [...new Set(
+        data.map(item => item.item_name).filter(name => name && name.trim() !== '')
+      )].sort();
+      
+      allItemNames = uniqueItems;
+    }
+
+    // ✅ SHOW AUTOCOMPLETE DROPDOWN WITH CHECKBOXES
+    function showAutocomplete(query) {
+      const dropdown = document.getElementById('autocompleteDropdown');
+      
+      if (!query || query.length < 2) {
+        dropdown.classList.remove('show');
+        return;
+      }
+      
+      const filtered = allItemNames.filter(name => 
+        name.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      if (filtered.length === 0) {
+        dropdown.innerHTML = '<div class="autocomplete-no-results">Tidak ada hasil ditemukan</div>';
+        dropdown.classList.add('show');
+        return;
+      }
+      
+      let html = '';
+      filtered.slice(0, 10).forEach(itemName => {
+        const regex = new RegExp(`(${query})`, 'gi');
+        const highlighted = itemName.replace(regex, '<mark>$1</mark>');
+        const isChecked = selectedItemNames.includes(itemName);
+        
+        html += `
+          <div class="autocomplete-item" onclick="toggleItemSelection('${itemName.replace(/'/g, "\\'")}', event)">
+            <input 
+              type="checkbox" 
+              ${isChecked ? 'checked' : ''}
+              onclick="event.stopPropagation(); toggleItemSelection('${itemName.replace(/'/g, "\\'")}', event)"
+            />
+            <span>${highlighted}</span>
+          </div>
+        `;
+      });
+      
+      dropdown.innerHTML = html;
+      dropdown.classList.add('show');
+    }
+
+    // ✅ TOGGLE ITEM SELECTION (ADD/REMOVE FROM ARRAY)
+    function toggleItemSelection(itemName, event) {
+      event.stopPropagation();
+      
+      const index = selectedItemNames.indexOf(itemName);
+      
+      if (index > -1) {
+        // REMOVE
+        selectedItemNames.splice(index, 1);
+      } else {
+        // ADD
+        selectedItemNames.push(itemName);
+      }
+      
+      renderSelectedItems();
+      updateClearButton();
+      
+      // REFRESH DROPDOWN TO UPDATE CHECKBOXES
+      const query = document.getElementById('filterItemName').value.trim();
+      showAutocomplete(query);
+    }
+
+    // ✅ RENDER SELECTED ITEMS AS TAGS
+    function renderSelectedItems() {
+      const container = document.getElementById('selectedItemsContainer');
+      
+      if (selectedItemNames.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      
+      let html = '';
+      selectedItemNames.forEach(itemName => {
+        html += `
+          <div class="selected-item-tag">
+            <span>${itemName}</span>
+            <button onclick="removeSelectedItem('${itemName.replace(/'/g, "\\'")}')">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    // ✅ REMOVE SINGLE SELECTED ITEM
+    function removeSelectedItem(itemName) {
+      const index = selectedItemNames.indexOf(itemName);
+      if (index > -1) {
+        selectedItemNames.splice(index, 1);
+      }
+      
+      renderSelectedItems();
+      updateClearButton();
+      
+      // REFRESH DROPDOWN IF OPEN
+      const query = document.getElementById('filterItemName').value.trim();
+      if (query) {
+        showAutocomplete(query);
+      }
+    }
+
+    // ✅ CLEAR ALL SELECTED ITEMS
+    function clearSelectedItems() {
+      selectedItemNames = [];
+      document.getElementById('filterItemName').value = '';
+      renderSelectedItems();
+      updateClearButton();
+      document.getElementById('autocompleteDropdown').classList.remove('show');
+    }
+
+    // ✅ UPDATE CLEAR BUTTON VISIBILITY
+    function updateClearButton() {
+      const clearBtn = document.getElementById('clearSelectionBtn');
+      if (selectedItemNames.length > 0) {
+        clearBtn.style.display = 'inline';
+      } else {
+        clearBtn.style.display = 'none';
+      }
+    }
+
+    //  EVENT LISTENER FOR INPUT
+    document.getElementById('filterItemName').addEventListener('input', function(e) {
+      const query = e.target.value.trim();
+      showAutocomplete(query);
+    });
+
+    //  HIDE DROPDOWN WHEN CLICKING OUTSIDE
+    document.addEventListener('click', function(e) {
+      const container = document.querySelector('.autocomplete-container');
+      if (!container.contains(e.target)) {
+        document.getElementById('autocompleteDropdown').classList.remove('show');
+      }
+    });
+
+    //  KEYBOARD NAVIGATION
+    document.getElementById('filterItemName').addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.getElementById('autocompleteDropdown').classList.remove('show');
+      }
+    });
 
     // Render Current Page
     function renderPage() {
@@ -805,7 +1117,6 @@
         `;
       });
       
-      // Update counters
       document.getElementById("dataCount").textContent = `${allData.length} items ditemukan`;
       document.getElementById("itemRange").textContent = `${start + 1}-${Math.min(end, allData.length)}`;
       document.getElementById("totalItems").textContent = allData.length;
@@ -823,7 +1134,6 @@
       
       pageButtons.innerHTML = "";
       
-      // Show max 5 page buttons
       let startPage = Math.max(1, currentPage - 2);
       let endPage = Math.min(totalPages, startPage + 4);
       
@@ -851,11 +1161,10 @@
       renderPage();
       updatePagination();
       
-      // Scroll to top of table
       document.querySelector('.table-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Update Active Filters Display
+    // ✅ UPDATE ACTIVE FILTERS DISPLAY
     function updateActiveFilters() {
       const container = document.getElementById("activeFilters");
       container.innerHTML = "";
@@ -883,9 +1192,22 @@
           </span>
         `;
       }
+      
+      // ✅ TAMPILKAN SELECTED ITEMS
+      if (selectedItemNames.length > 0) {
+        container.innerHTML += `
+          <span class="filter-badge px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-bold flex items-center gap-2 w-fit">
+            <i class="fas fa-box"></i>
+            ${selectedItemNames.length} Item(s) dipilih
+            <button onclick="clearFilter('itemname')" class="hover:text-orange-900">
+              <i class="fas fa-times"></i>
+            </button>
+          </span>
+        `;
+      }
     }
 
-    // Clear Filter
+    // ✅ CLEAR FILTER
     function clearFilter(type) {
       if (type === 'category') {
         document.getElementById("filterCategory").value = "";
@@ -893,71 +1215,101 @@
       } else if (type === 'status') {
         document.getElementById("filterStatus").value = "";
         currentStatus = "";
+      } else if (type === 'itemname') {
+        clearSelectedItems();
       }
       loadItems();
     }
 
-    // Update Item Status
-    async function updateItem(ticket_id, item_id, btn) {
-      const status = document.getElementById(`status_${ticket_id}_${item_id}`).value;
-      const feedback = document.getElementById(`fb_${ticket_id}_${item_id}`).value;
-
-      const form = new FormData();
-      form.append("action", "updateItemStatus");
-      form.append("ticket_id", ticket_id);
-      form.append("item_id", item_id);
-      form.append("status", status);
-      form.append("feedback", feedback);
-
+    // UPDATE ITEM (SAVE STATUS & FEEDBACK)
+    async function updateItem(ticketId, itemId, btnElement) {
+      const statusSelect = document.getElementById(`status_${ticketId}_${itemId}`);
+      const feedbackInput = document.getElementById(`fb_${ticketId}_${itemId}`);
+      
+      const newStatus = statusSelect.value;
+      const newFeedback = feedbackInput.value.trim();
+      
+      btnElement.disabled = true;
+      btnElement.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+      
       try {
-        const r = await fetch(BASE_URL, { method: "POST", body: form });
-        const j = await r.json();
-
-        if (j.success) {
-          // Show success feedback
-          const originalHTML = btn.innerHTML;
-          btn.innerHTML = '<i class="fas fa-check mr-2"></i>Data Berhasil disimpan';
-          btn.className = 'px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-lg shadow-lg';
+        const response = await fetch(`${BASE_URL}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            action: 'updateStatus',
+            ticket_id: ticketId,
+            item_id: itemId,
+            status: newStatus,
+            feedback: newFeedback
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          btnElement.innerHTML = '<i class="fas fa-check mr-2"></i>Saved!';
+          btnElement.classList.remove('from-green-500', 'to-green-600');
+          btnElement.classList.add('from-emerald-500', 'to-emerald-600');
           
           setTimeout(() => {
-            btn.innerHTML = originalHTML;
-            btn.className = 'px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all';
+            btnElement.innerHTML = '<i class="fas fa-save mr-2"></i>Save';
+            btnElement.classList.remove('from-emerald-500', 'to-emerald-600');
+            btnElement.classList.add('from-green-500', 'to-green-600');
+            btnElement.disabled = false;
           }, 2000);
           
-          loadItems();
+          // UPDATE LOCAL DATA
+          const item = allData.find(it => it.ticket_id === ticketId && it.item_id === itemId);
+          if (item) {
+            item.status = newStatus;
+            item.feedback = newFeedback;
+          }
+          
+          renderPage();
         } else {
-          alert("Gagal update item!");
+          throw new Error(result.message || 'Update failed');
         }
-      } catch (e) {
-        console.error("Update failed", e);
-        alert("Terjadi kesalahan koneksi!");
+        
+      } catch (error) {
+        console.error('Update failed:', error);
+        btnElement.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Failed';
+        btnElement.classList.add('from-red-500', 'to-red-600');
+        
+        setTimeout(() => {
+          btnElement.innerHTML = '<i class="fas fa-save mr-2"></i>Save';
+          btnElement.classList.remove('from-red-500', 'to-red-600');
+          btnElement.classList.add('from-green-500', 'to-green-600');
+          btnElement.disabled = false;
+        }, 2000);
       }
     }
 
-    // Export to Excel
-    async function exportExcel() {
-      let url = `${BASE_URL}?action=exportRequests`;
-
-      if (currentCategory) url += `&filter_category=${currentCategory}`;
-      if (currentStatus) url += `&filter_status=${currentStatus}`;
-
-      window.open(url, "_blank");
+    // EXPORT TO EXCEL
+    function exportExcel() {
+      const category = currentCategory || 'all';
+      const status = currentStatus || 'all';
+      const itemNames = selectedItemNames.length > 0 ? selectedItemNames.join('|') : 'all';
+      
+      const exportUrl = `${BASE_URL}?action=exportExcel&filter_category=${category}&filter_status=${status}&filter_itemnames=${encodeURIComponent(itemNames)}`;
+      
+      window.open(exportUrl, '_blank');
     }
 
-    // Logout
+    // LOGOUT
     function logout() {
-      if (confirm("Yakin ingin keluar dari admin panel?")) {
-        localStorage.clear();
-        window.location.href = "login.html";
+      if (confirm('Apakah Anda yakin ingin logout?')) {
+        window.location.href = 'login.html';
       }
     }
 
-    // ========== INITIALIZE ==========
-    // Load categories and initial data for Admin Panel
-    loadCategories().then(loadItems);
-    
-    // Load dashboard data on page load
-    loadDashboardData();
+    // ✅✅✅ INIT ON PAGE LOAD - PERBAIKAN DI SINI! ✅✅✅
+    window.onload = function() {
+      loadCategories();        // Load kategori dropdown
+      loadDashboardData();     // Load dashboard (default tab aktif)
+      loadItems();             // ✅ AUTO LOAD DATA ADMIN PANEL!
+    };
   </script>
+
 </body>
 </html>
