@@ -546,6 +546,32 @@
           </select>
         </div>
 
+        <!-- STORE FILTER WITH AUTOCOMPLETE & MULTISELECT -->
+        <div class="md:col-span-3 autocomplete-container">
+          <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center justify-between">
+            <span class="flex items-center gap-2">
+              <i class="fas fa-store text-blue-500"></i>
+              <span>Cari Store</span>
+            </span>
+            <button 
+              onclick="clearSelectedStores()" 
+              class="text-xs text-red-500 hover:text-red-700 font-semibold"
+              id="clearStoreSelectionBtn"
+              style="display: none;"
+            >
+              <i class="fas fa-times-circle mr-1"></i>Clear All
+            </button>
+          </label>
+          <input 
+            type="text"
+            id="filterStoreName" 
+            placeholder="Ketik atau pilih store..."
+            autocomplete="off"
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all font-semibold text-gray-700"
+          />
+          <div id="autocompleteStoreDropdown" class="autocomplete-dropdown"></div>
+        </div>
+
         <!--  ITEM NAME FILTER WITH AUTOCOMPLETE & MULTISELECT -->
         <div class="md:col-span-3 autocomplete-container">
           <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center justify-between">
@@ -572,12 +598,11 @@
           <!--  DROPDOWN AUTOCOMPLETE -->
           <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
         </div>
+      </div>
 
-        <!-- BUTTONS -->
+      <!-- Row Kedua untuk Button Tampilkan Data -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mt-4">
         <div class="md:col-span-3">
-          <label class="block text-sm font-bold text-gray-700 mb-2 opacity-0 pointer-events-none">
-            <span>Hidden</span>
-          </label>
           <button 
             onclick="loadItems()" 
             class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
@@ -588,6 +613,9 @@
         </div>
       </div>
 
+      <!-- SELECTED STORES TAGS SECTION -->
+      <div id="selectedStoresContainer" class="selected-items-container mt-2"></div>
+      
       <!-- SELECTED ITEMS TAGS SECTION (MOVED OUTSIDE GRID) -->
       <div id="selectedItemsContainer" class="selected-items-container mt-2"></div>
 
@@ -702,11 +730,12 @@
   </div>
 
   <script>
-    const BASE_URL = "https://script.google.com/macros/s/AKfycbwHQczs5Leem_KHUzcumnciBaCZkgo7iSsxrGbBmZwSWfvE7i_prhAIJSoxD3Omqnu_Mw/exec";
+    const BASE_URL = "https://script.google.com/macros/s/AKfycbxsXYS89gzezNDh7UZVG-VhvBYYSBtR_qtfBEoN3Uc6t1IQpdwciPPOfZiTh9gLMk8yIg/exec";
     
     let currentCategory = "";
     let currentStatus = "";
     let selectedItemNames = []; //  ARRAY UNTUK MENYIMPAN MULTIPLE ITEMS
+    let selectedStoreNames = []; //  ARRAY UNTUK MENYIMPAN MULTIPLE STORES
     let allData = [];
     let currentPage = 1;
     const itemsPerPage = 20;
@@ -714,6 +743,7 @@
     
     //  AUTOCOMPLETE DATA
     let allItemNames = [];
+    let allStoreNames = [];
 
     // TAB SWITCHING FUNCTION
     function switchTab(tabName) {
@@ -861,6 +891,16 @@
         
         //  POPULATE AUTOCOMPLETE LIST
         populateItemNameList(fetchedData);
+        populateStoreNameList(fetchedData);
+        
+        //  CLIENT-SIDE FILTER BY MULTIPLE STORES
+        if (selectedStoreNames.length > 0) {
+          fetchedData = fetchedData.filter(item => 
+            selectedStoreNames.some(selected => 
+              item.store_name && item.store_name.toLowerCase().includes(selected.toLowerCase())
+            )
+          );
+        }
         
         //  CLIENT-SIDE FILTER BY MULTIPLE ITEM NAMES
         if (selectedItemNames.length > 0) {
@@ -903,6 +943,15 @@
       )].sort();
       
       allItemNames = uniqueItems;
+    }
+
+    //  POPULATE STORE NAME LIST FOR AUTOCOMPLETE
+    function populateStoreNameList(data) {
+      const uniqueStores = [...new Set(
+        data.map(item => item.store_name).filter(name => name && name.trim() !== '')
+      )].sort();
+      
+      allStoreNames = uniqueStores;
     }
 
     //  SHOW AUTOCOMPLETE DROPDOWN WITH CHECKBOXES
@@ -1031,24 +1080,168 @@
       }
     }
 
-    //  EVENT LISTENER FOR INPUT
+    //  SHOW AUTOCOMPLETE DROPDOWN FOR STORES WITH CHECKBOXES
+    function showStoreAutocomplete(query) {
+      const dropdown = document.getElementById('autocompleteStoreDropdown');
+      
+      if (!query || query.length < 2) {
+        dropdown.classList.remove('show');
+        return;
+      }
+      
+      const filtered = allStoreNames.filter(name => 
+        name.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      if (filtered.length === 0) {
+        dropdown.innerHTML = '<div class="autocomplete-no-results">Tidak ada hasil ditemukan</div>';
+        dropdown.classList.add('show');
+        return;
+      }
+      
+      let html = '';
+      filtered.slice(0, 10).forEach(storeName => {
+        const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedQuery})`, 'gi');
+        const highlighted = storeName.replace(regex, '<mark>$1</mark>');
+        const isChecked = selectedStoreNames.includes(storeName);
+        const escapedName = storeName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        
+        html += `
+          <div class="autocomplete-item" onclick="toggleStoreSelection('${escapedName}', event)">
+            <input 
+              type="checkbox" 
+              ${isChecked ? 'checked' : ''}
+              onclick="event.stopPropagation(); toggleStoreSelection('${escapedName}', event)"
+            />
+            <span>${highlighted}</span>
+          </div>
+        `;
+      });
+      
+      dropdown.innerHTML = html;
+      dropdown.classList.add('show');
+    }
+
+    //  TOGGLE STORE SELECTION (ADD/REMOVE FROM ARRAY)
+    function toggleStoreSelection(storeName, event) {
+      event.stopPropagation();
+      
+      const index = selectedStoreNames.indexOf(storeName);
+      
+      if (index > -1) {
+        selectedStoreNames.splice(index, 1);
+      } else {
+        selectedStoreNames.push(storeName);
+      }
+      
+      renderSelectedStores();
+      updateClearStoreButton();
+      
+      const query = document.getElementById('filterStoreName').value.trim();
+      showStoreAutocomplete(query);
+    }
+
+    //  RENDER SELECTED STORES AS TAGS
+    function renderSelectedStores() {
+      const container = document.getElementById('selectedStoresContainer');
+      
+      if (selectedStoreNames.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      
+      let html = '';
+      selectedStoreNames.forEach(storeName => {
+        const escapedName = storeName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        html += `
+          <div class="selected-item-tag">
+            <span>${storeName}</span>
+            <button onclick="removeSelectedStore('${escapedName}')">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    //  REMOVE SINGLE SELECTED STORE
+    function removeSelectedStore(storeName) {
+      const index = selectedStoreNames.indexOf(storeName);
+      if (index > -1) {
+        selectedStoreNames.splice(index, 1);
+      }
+      
+      renderSelectedStores();
+      updateClearStoreButton();
+      
+      const query = document.getElementById('filterStoreName').value.trim();
+      if (query) {
+        showStoreAutocomplete(query);
+      }
+    }
+
+    //  CLEAR ALL SELECTED STORES
+    function clearSelectedStores() {
+      selectedStoreNames = [];
+      document.getElementById('filterStoreName').value = '';
+      renderSelectedStores();
+      updateClearStoreButton();
+      document.getElementById('autocompleteStoreDropdown').classList.remove('show');
+    }
+
+    //  UPDATE CLEAR BUTTON VISIBILITY FOR STORES
+    function updateClearStoreButton() {
+      const clearBtn = document.getElementById('clearStoreSelectionBtn');
+      if (selectedStoreNames.length > 0) {
+        clearBtn.style.display = 'inline';
+      } else {
+        clearBtn.style.display = 'none';
+      }
+    }
+
+    //  EVENT LISTENER FOR ITEM INPUT
     document.getElementById('filterItemName').addEventListener('input', function(e) {
       const query = e.target.value.trim();
       showAutocomplete(query);
     });
 
+    //  EVENT LISTENER FOR STORE INPUT
+    document.getElementById('filterStoreName').addEventListener('input', function(e) {
+      const query = e.target.value.trim();
+      showStoreAutocomplete(query);
+    });
+
     //  HIDE DROPDOWN WHEN CLICKING OUTSIDE
     document.addEventListener('click', function(e) {
-      const container = document.querySelector('.autocomplete-container');
-      if (!container.contains(e.target)) {
+      const containers = document.querySelectorAll('.autocomplete-container');
+      let clickedInside = false;
+      
+      containers.forEach(container => {
+        if (container.contains(e.target)) {
+          clickedInside = true;
+        }
+      });
+      
+      if (!clickedInside) {
+        document.getElementById('autocompleteDropdown').classList.remove('show');
+        document.getElementById('autocompleteStoreDropdown').classList.remove('show');
+      }
+    });
+
+    //  KEYBOARD NAVIGATION FOR ITEM
+    document.getElementById('filterItemName').addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
         document.getElementById('autocompleteDropdown').classList.remove('show');
       }
     });
 
-    //  KEYBOARD NAVIGATION
-    document.getElementById('filterItemName').addEventListener('keydown', function(e) {
+    //  KEYBOARD NAVIGATION FOR STORE
+    document.getElementById('filterStoreName').addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
-        document.getElementById('autocompleteDropdown').classList.remove('show');
+        document.getElementById('autocompleteStoreDropdown').classList.remove('show');
       }
     });
 
@@ -1179,6 +1372,19 @@
         `;
       }
       
+      //  TAMPILKAN SELECTED STORES
+      if (selectedStoreNames.length > 0) {
+        container.innerHTML += `
+          <span class="filter-badge px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-bold flex items-center gap-2 w-fit">
+            <i class="fas fa-store"></i>
+            ${selectedStoreNames.length} Store(s) dipilih
+            <button onclick="clearFilter('store')" class="hover:text-blue-900">
+              <i class="fas fa-times"></i>
+            </button>
+          </span>
+        `;
+      }
+      
       //  TAMPILKAN SELECTED ITEMS
       if (selectedItemNames.length > 0) {
         container.innerHTML += `
@@ -1242,6 +1448,8 @@
       } else if (type === 'status') {
         document.getElementById("filterStatus").value = "";
         currentStatus = "";
+      } else if (type === 'store') {
+        clearSelectedStores();
       } else if (type === 'itemname') {
         clearSelectedItems();
       }
@@ -1425,11 +1633,9 @@
       }
     }
 
-    // LOGOUT
+    // LOGOUT (TANPA POP UP KONFIRMASI)
     function logout() {
-      if (confirm('Apakah Anda yakin ingin logout?')) {
-        window.location.href = 'login.html';
-      }
+      window.location.href = 'login.html';
     }
 
     //  ✅ FIX #5: INIT ON PAGE LOAD - PERBAIKAN UTAMA
