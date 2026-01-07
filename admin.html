@@ -602,7 +602,7 @@
 
       <!-- Row Kedua untuk Button Tampilkan Data -->
       <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mt-4">
-        <div class="md:col-span-3 md:col-start-10">
+        <div class="md:col-span-3">
           <button 
             onclick="loadItems()" 
             class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
@@ -730,18 +730,17 @@
   </div>
 
   <script>
-    const BASE_URL = "https://script.google.com/macros/s/AKfycbxsXYS89gzezNDh7UZVG-VhvBYYSBtR_qtfBEoN3Uc6t1IQpdwciPPOfZiTh9gLMk8yIg/exec";
+    const BASE_URL = "https://script.google.com/macros/s/AKfycbylLLA5XPvaWr_DUwwFWpLM9AF53lODzo6ectqrjy7EbslGgpd2m7QgWKSVSku56j6KMA/exec";
     
     let currentCategory = "";
     let currentStatus = "";
-    let selectedItemNames = []; //  ARRAY UNTUK MENYIMPAN MULTIPLE ITEMS
-    let selectedStoreNames = []; //  ARRAY UNTUK MENYIMPAN MULTIPLE STORES
+    let selectedItemNames = [];
+    let selectedStoreNames = [];
     let allData = [];
     let currentPage = 1;
     const itemsPerPage = 20;
     let totalPages = 1;
     
-    //  AUTOCOMPLETE DATA
     let allItemNames = [];
     let allStoreNames = [];
 
@@ -761,7 +760,6 @@
       if (tabName === 'dashboard') {
         loadDashboardData();
       } else if (tabName === 'admin') {
-        // ✅ FIX #1: Load items ketika user buka tab Admin Panel
         if (allData.length === 0) {
           loadItems();
         }
@@ -856,7 +854,6 @@
       }
     }
 
-    //  ✅ FIX #2: LOAD ITEMS WITH MULTIPLE ITEM NAMES FILTER - PERBAIKAN
     async function loadItems() {
       const filterCategory = document.getElementById("filterCategory").value;
       const filterStatus = document.getElementById("filterStatus").value;
@@ -883,17 +880,14 @@
         
         let fetchedData = await r.json();
         
-        //  ✅ PERBAIKAN: Cek apakah response valid
         if (!Array.isArray(fetchedData)) {
           console.error("Invalid response format:", fetchedData);
           throw new Error("Invalid data format received from server");
         }
         
-        //  POPULATE AUTOCOMPLETE LIST
         populateItemNameList(fetchedData);
         populateStoreNameList(fetchedData);
         
-        //  CLIENT-SIDE FILTER BY MULTIPLE STORES
         if (selectedStoreNames.length > 0) {
           fetchedData = fetchedData.filter(item => 
             selectedStoreNames.some(selected => 
@@ -902,7 +896,6 @@
           );
         }
         
-        //  CLIENT-SIDE FILTER BY MULTIPLE ITEM NAMES
         if (selectedItemNames.length > 0) {
           fetchedData = fetchedData.filter(item => 
             selectedItemNames.some(selected => 
@@ -919,7 +912,6 @@
         renderPage();
         updatePagination();
         
-        //  ✅ TAMBAHAN: Tampilkan notifikasi jika data berhasil dimuat
         console.log(`✅ Data loaded successfully: ${allData.length} items`);
         
       } catch (e) {
@@ -936,7 +928,6 @@
       }
     }
 
-    //  POPULATE ITEM NAME LIST FOR AUTOCOMPLETE
     function populateItemNameList(data) {
       const uniqueItems = [...new Set(
         data.map(item => item.item_name).filter(name => name && name.trim() !== '')
@@ -945,7 +936,6 @@
       allItemNames = uniqueItems;
     }
 
-    //  POPULATE STORE NAME LIST FOR AUTOCOMPLETE
     function populateStoreNameList(data) {
       const uniqueStores = [...new Set(
         data.map(item => item.store_name).filter(name => name && name.trim() !== '')
@@ -954,7 +944,6 @@
       allStoreNames = uniqueStores;
     }
 
-    //  SHOW AUTOCOMPLETE DROPDOWN WITH CHECKBOXES
     function showAutocomplete(query) {
       const dropdown = document.getElementById('autocompleteDropdown');
       
@@ -997,29 +986,24 @@
       dropdown.classList.add('show');
     }
 
-    //  TOGGLE ITEM SELECTION (ADD/REMOVE FROM ARRAY)
     function toggleItemSelection(itemName, event) {
       event.stopPropagation();
       
       const index = selectedItemNames.indexOf(itemName);
       
       if (index > -1) {
-        // REMOVE
         selectedItemNames.splice(index, 1);
       } else {
-        // ADD
         selectedItemNames.push(itemName);
       }
       
       renderSelectedItems();
       updateClearButton();
       
-      // REFRESH DROPDOWN TO UPDATE CHECKBOXES
       const query = document.getElementById('filterItemName').value.trim();
       showAutocomplete(query);
     }
 
-    //  RENDER SELECTED ITEMS AS TAGS
     function renderSelectedItems() {
       const container = document.getElementById('selectedItemsContainer');
       
@@ -1044,7 +1028,6 @@
       container.innerHTML = html;
     }
 
-    //  REMOVE SINGLE SELECTED ITEM
     function removeSelectedItem(itemName) {
       const index = selectedItemNames.indexOf(itemName);
       if (index > -1) {
@@ -1054,14 +1037,12 @@
       renderSelectedItems();
       updateClearButton();
       
-      // REFRESH DROPDOWN IF OPEN
       const query = document.getElementById('filterItemName').value.trim();
       if (query) {
         showAutocomplete(query);
       }
     }
 
-    //  CLEAR ALL SELECTED ITEMS
     function clearSelectedItems() {
       selectedItemNames = [];
       document.getElementById('filterItemName').value = '';
@@ -1070,7 +1051,6 @@
       document.getElementById('autocompleteDropdown').classList.remove('show');
     }
 
-    //  UPDATE CLEAR BUTTON VISIBILITY
     function updateClearButton() {
       const clearBtn = document.getElementById('clearSelectionBtn');
       if (selectedItemNames.length > 0) {
@@ -1080,7 +1060,6 @@
       }
     }
 
-    //  SHOW AUTOCOMPLETE DROPDOWN FOR STORES WITH CHECKBOXES
     function showStoreAutocomplete(query) {
       const dropdown = document.getElementById('autocompleteStoreDropdown');
       
@@ -1123,7 +1102,6 @@
       dropdown.classList.add('show');
     }
 
-    //  TOGGLE STORE SELECTION (ADD/REMOVE FROM ARRAY)
     function toggleStoreSelection(storeName, event) {
       event.stopPropagation();
       
@@ -1142,7 +1120,6 @@
       showStoreAutocomplete(query);
     }
 
-    //  RENDER SELECTED STORES AS TAGS
     function renderSelectedStores() {
       const container = document.getElementById('selectedStoresContainer');
       
@@ -1167,7 +1144,6 @@
       container.innerHTML = html;
     }
 
-    //  REMOVE SINGLE SELECTED STORE
     function removeSelectedStore(storeName) {
       const index = selectedStoreNames.indexOf(storeName);
       if (index > -1) {
@@ -1183,7 +1159,6 @@
       }
     }
 
-    //  CLEAR ALL SELECTED STORES
     function clearSelectedStores() {
       selectedStoreNames = [];
       document.getElementById('filterStoreName').value = '';
@@ -1192,7 +1167,6 @@
       document.getElementById('autocompleteStoreDropdown').classList.remove('show');
     }
 
-    //  UPDATE CLEAR BUTTON VISIBILITY FOR STORES
     function updateClearStoreButton() {
       const clearBtn = document.getElementById('clearStoreSelectionBtn');
       if (selectedStoreNames.length > 0) {
@@ -1202,19 +1176,16 @@
       }
     }
 
-    //  EVENT LISTENER FOR ITEM INPUT
     document.getElementById('filterItemName').addEventListener('input', function(e) {
       const query = e.target.value.trim();
       showAutocomplete(query);
     });
 
-    //  EVENT LISTENER FOR STORE INPUT
     document.getElementById('filterStoreName').addEventListener('input', function(e) {
       const query = e.target.value.trim();
       showStoreAutocomplete(query);
     });
 
-    //  HIDE DROPDOWN WHEN CLICKING OUTSIDE
     document.addEventListener('click', function(e) {
       const containers = document.querySelectorAll('.autocomplete-container');
       let clickedInside = false;
@@ -1231,21 +1202,18 @@
       }
     });
 
-    //  KEYBOARD NAVIGATION FOR ITEM
     document.getElementById('filterItemName').addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         document.getElementById('autocompleteDropdown').classList.remove('show');
       }
     });
 
-    //  KEYBOARD NAVIGATION FOR STORE
     document.getElementById('filterStoreName').addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         document.getElementById('autocompleteStoreDropdown').classList.remove('show');
       }
     });
 
-    // ✅ FIX #3: Render Current Page - PERBAIKAN UNTUK MENAMPILKAN DATA
     function renderPage() {
       const tbody = document.getElementById("itemList");
       const start = (currentPage - 1) * itemsPerPage;
@@ -1270,12 +1238,17 @@
         return;
       }
       
-      pageData.forEach(it => {
-        //  ✅ PERBAIKAN: Validasi data sebelum render
+      // ✅ FIX: Gunakan array untuk menghindari innerHTML += yang menyebabkan DOM rebuild
+      const rows = [];
+      
+      pageData.forEach((it, pageIndex) => {
         if (!it || !it.ticket_id || !it.item_id) {
           console.warn("Invalid item data:", it);
           return;
         }
+        
+        // ✅ CALCULATE GLOBAL INDEX IN allData ARRAY
+        const globalIndex = start + pageIndex;
         
         const rowColor =
           it.status === "Approved" ? "row-approved" :
@@ -1285,7 +1258,7 @@
         const escapedTicketId = String(it.ticket_id).replace(/'/g, "\\'");
         const escapedItemId = String(it.item_id).replace(/'/g, "\\'");
 
-        tbody.innerHTML += `
+        rows.push(`
           <tr class="border-b hover:shadow-lg transition-all ${rowColor}">
             <td class="px-4 py-4 font-bold text-gray-800 whitespace-nowrap">#${it.ticket_id || 'N/A'}</td>
             <td class="px-4 py-4 font-semibold text-gray-700 whitespace-nowrap">
@@ -1306,7 +1279,7 @@
             </td>
             <td class="px-4 py-4 text-center whitespace-nowrap">
               <select 
-                id="status_${it.ticket_id}_${it.item_id}" 
+                id="status_${globalIndex}" 
                 class="px-3 py-2 border-2 border-gray-300 rounded-lg font-bold text-sm transition-all"
               >
                 <option ${it.status==="Pending"?"selected":""}>Pending</option>
@@ -1316,7 +1289,7 @@
             </td>
             <td class="px-4 py-4 whitespace-nowrap">
               <input 
-                id="fb_${it.ticket_id}_${it.item_id}" 
+                id="fb_${globalIndex}" 
                 class="px-3 py-2 border-2 border-gray-300 rounded-lg w-full min-w-[200px] font-medium transition-all" 
                 value="${it.feedback||""}"
                 placeholder="Tulis feedback..."
@@ -1328,14 +1301,17 @@
             <td class="px-4 py-4 text-center whitespace-nowrap">
               <button 
                 class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all"
-                onclick="updateItem('${escapedTicketId}','${escapedItemId}', this)"
+                onclick="updateItem(${globalIndex}, this)"
               >
                 <i class="fas fa-save mr-2"></i>Save
               </button>
             </td>
           </tr>
-        `;
+        `);
       });
+      
+      // ✅ FIX: Set innerHTML sekali saja setelah semua rows terkumpul
+      tbody.innerHTML = rows.join('');
       
       document.getElementById("dataCount").textContent = `${allData.length} items ditemukan`;
       document.getElementById("itemRange").textContent = `${start + 1}-${Math.min(end, allData.length)}`;
@@ -1343,7 +1319,6 @@
       document.getElementById("pageInfo").innerHTML = `<i class="fas fa-file-alt mr-2"></i>Halaman ${currentPage} dari ${totalPages || 1}`;
     }
 
-    //  UPDATE ACTIVE FILTERS DISPLAY
     function updateActiveFilters() {
       const container = document.getElementById("activeFilters");
       container.innerHTML = "";
@@ -1372,7 +1347,6 @@
         `;
       }
       
-      //  TAMPILKAN SELECTED STORES
       if (selectedStoreNames.length > 0) {
         container.innerHTML += `
           <span class="filter-badge px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-bold flex items-center gap-2 w-fit">
@@ -1385,7 +1359,6 @@
         `;
       }
       
-      //  TAMPILKAN SELECTED ITEMS
       if (selectedItemNames.length > 0) {
         container.innerHTML += `
           <span class="filter-badge px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-bold flex items-center gap-2 w-fit">
@@ -1399,7 +1372,6 @@
       }
     }
 
-    // Update Pagination Buttons
     function updatePagination() {
       const pageButtons = document.getElementById("pageButtons");
       const prevBtn = document.getElementById("prevBtn");
@@ -1430,7 +1402,6 @@
       }
     }
 
-    // Go to Specific Page
     function goToPage(page) {
       if (page < 1 || page > totalPages) return;
       currentPage = page;
@@ -1440,7 +1411,6 @@
       document.querySelector('.table-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    //  CLEAR FILTER
     function clearFilter(type) {
       if (type === 'category') {
         document.getElementById("filterCategory").value = "";
@@ -1456,30 +1426,67 @@
       loadItems();
     }
 
-    // UPDATE ITEM (SAVE STATUS & FEEDBACK)
-    async function updateItem(ticketId, itemId, btnElement) {
-      const statusSelect = document.getElementById(`status_${ticketId}_${itemId}`);
-      const feedbackInput = document.getElementById(`fb_${ticketId}_${itemId}`);
+    // ✅✅✅ FIXED: UPDATE ITEM WITH ARRAY INDEX (DUPLICATE ITEM BUG FIXED) ✅✅✅
+    async function updateItem(dataIndex, btnElement) {
+      const statusSelect = document.getElementById(`status_${dataIndex}`);
+      const feedbackInput = document.getElementById(`fb_${dataIndex}`);
       
       if (!statusSelect || !feedbackInput) {
-        console.error("Element not found for ticket_id:", ticketId, "item_id:", itemId);
+        console.error("❌ Element not found for index:", dataIndex);
+        alert('⚠️ Error: Element tidak ditemukan. Silakan refresh halaman.');
         return;
       }
       
+      // ✅ STEP 1: Ambil item berdasarkan INDEX ARRAY (bukan find!)
+      const item = allData[dataIndex];
+      
+      if (!item) {
+        console.error('❌ Item tidak ditemukan di allData[' + dataIndex + ']!');
+        alert('⚠️ Error: Data tidak ditemukan. Silakan refresh halaman.');
+        return;
+      }
+      
+      // ✅ STEP 2: Ambil nilai BARU dari form
       const newStatus = statusSelect.value;
       const newFeedback = feedbackInput.value.trim();
       
+      console.log('🔄 Updating item at index ' + dataIndex + ':', {
+        ticket_id: item.ticket_id,
+        item_id: item.item_id,
+        item_name: item.item_name,
+        qty: item.qty,
+        newStatus: newStatus,
+        newFeedback: newFeedback
+      });
+      
+      // ✅ SIMPAN NILAI LAMA DI LUAR SCOPE
+      const oldStatus = item.status;
+      const oldFeedback = item.feedback;
+      
+      console.log('📦 Nilai lama sebelum update:', {
+        oldStatus: oldStatus,
+        oldFeedback: oldFeedback
+      });
+      
+      // ✅ UPDATE NILAI BARU KE LOCAL DATA (LANGSUNG KE INDEX ARRAY)
+      allData[dataIndex].status = newStatus;
+      allData[dataIndex].feedback = newFeedback;
+      
+      console.log('✅ Local data updated at index ' + dataIndex + ':', allData[dataIndex]);
+      
+      // Disable button dan tampilkan loading
       btnElement.disabled = true;
       btnElement.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
       
       try {
+        // ✅ STEP 3: Kirim ke server
         const response = await fetch(`${BASE_URL}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({
             action: 'updateitemstatus',
-            ticket_id: ticketId,
-            item_id: itemId,
+            ticket_id: item.ticket_id,
+            item_id: item.item_id,
             status: newStatus,
             feedback: newFeedback
           })
@@ -1488,54 +1495,66 @@
         const result = await response.json();
         
         if (result.success) {
+          // ✅ SUCCESS - Show success message
           btnElement.innerHTML = '<i class="fas fa-check mr-2"></i>Saved!';
           btnElement.classList.remove('from-green-500', 'to-green-600');
           btnElement.classList.add('from-emerald-500', 'to-emerald-600');
           
+          console.log('✅ Server update successful!');
+          console.log('✅ Status tersimpan:', newStatus);
+          console.log('✅ Item index ' + dataIndex + ' berhasil diupdate!');
+          
+          // ✅ STEP 4: Re-render halaman SETELAH data lokal sudah diupdate
           setTimeout(() => {
             btnElement.innerHTML = '<i class="fas fa-save mr-2"></i>Save';
             btnElement.classList.remove('from-emerald-500', 'to-emerald-600');
             btnElement.classList.add('from-green-500', 'to-green-600');
             btnElement.disabled = false;
-          }, 2000);
+            
+            // Re-render untuk update warna row sesuai status baru
+            renderPage();
+          }, 1500);
           
-          // UPDATE LOCAL DATA
-          const item = allData.find(it => it.ticket_id == ticketId && it.item_id == itemId);
-          if (item) {
-            item.status = newStatus;
-            item.feedback = newFeedback;
-          }
-          
-          renderPage();
         } else {
           throw new Error(result.message || 'Update failed');
         }
         
       } catch (error) {
-        console.error('Update failed:', error);
+        // ❌ GAGAL - Rollback local data menggunakan variabel oldStatus & oldFeedback
+        console.error('❌ Update failed:', error);
+        
+        // ✅ ROLLBACK KE NILAI LAMA (LANGSUNG KE INDEX ARRAY)
+        allData[dataIndex].status = oldStatus;
+        allData[dataIndex].feedback = oldFeedback;
+        console.log('↩️ Rolled back to old values at index ' + dataIndex + ':', {
+          status: oldStatus,
+          feedback: oldFeedback
+        });
+        
         btnElement.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Failed';
         btnElement.classList.add('from-red-500', 'to-red-600');
+        
+        alert('❌ Gagal menyimpan perubahan!\n\n' + error.message + '\n\nSilakan coba lagi.');
         
         setTimeout(() => {
           btnElement.innerHTML = '<i class="fas fa-save mr-2"></i>Save';
           btnElement.classList.remove('from-red-500', 'to-red-600');
           btnElement.classList.add('from-green-500', 'to-green-600');
           btnElement.disabled = false;
+          
+          // Render ulang untuk kembalikan tampilan ke status lama
+          renderPage();
         }, 2000);
       }
     }
 
-    // ✅ FIX #4: EXPORT TO EXCEL - PERBAIKAN
-    //  ✅ FIXED: EXPORT TO EXCEL MENGGUNAKAN CLIENT-SIDE (SHEETJS)
     function exportExcel() {
-      //  VALIDASI: Pastikan ada data sebelum export
       if (allData.length === 0) {
         alert('⚠️ Tidak ada data untuk di-export!\n\nSilakan:\n1. Klik tombol "Tampilkan Data" terlebih dahulu\n2. Pastikan ada data yang sesuai dengan filter Anda');
         return;
       }
       
       try {
-        //  TAMPILKAN LOADING NOTIFICATION
         const notification = document.createElement('div');
         notification.id = 'exportNotification';
         notification.innerHTML = `
@@ -1545,7 +1564,6 @@
         `;
         document.body.appendChild(notification);
         
-        //  SIAPKAN DATA UNTUK EXCEL
         const exportData = allData.map(item => ({
           'Ticket ID': item.ticket_id || 'N/A',
           'Store': item.store_name || 'N/A',
@@ -1559,46 +1577,39 @@
           'Created At': item.created_at || 'N/A'
         }));
         
-        //  BUAT WORKBOOK DAN WORKSHEET
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.json_to_sheet(exportData);
         
-        //  SET COLUMN WIDTHS
         const colWidths = [
-          { wch: 15 }, // Ticket ID
-          { wch: 35 }, // Store
-          { wch: 15 }, // Item ID
-          { wch: 50 }, // Item Name
-          { wch: 8 },  // Qty
-          { wch: 30 }, // Remarks
-          { wch: 30 }, // Category
-          { wch: 12 }, // Status
-          { wch: 30 }, // Feedback
-          { wch: 20 }  // Created At
+          { wch: 15 },
+          { wch: 35 },
+          { wch: 15 },
+          { wch: 50 },
+          { wch: 8 },
+          { wch: 30 },
+          { wch: 30 },
+          { wch: 12 },
+          { wch: 30 },
+          { wch: 20 }
         ];
         ws['!cols'] = colWidths;
         
-        //  TAMBAHKAN WORKSHEET KE WORKBOOK
         XLSX.utils.book_append_sheet(wb, ws, 'Request Data');
         
-        //  GENERATE FILENAME DENGAN TIMESTAMP DAN FILTER INFO
         const now = new Date();
         const timestamp = now.toISOString().slice(0, 19).replace(/:/g, '-').replace('T', '_');
         const categoryText = currentCategory || 'All';
         const statusText = currentStatus || 'All';
         const filename = `Export_${categoryText}_${statusText}_${timestamp}.xlsx`;
         
-        //  DOWNLOAD FILE
         XLSX.writeFile(wb, filename);
         
-        //  UPDATE NOTIFICATION - SUCCESS
         notification.innerHTML = `
           <div style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); z-index: 9999; font-weight: bold; animation: slideDown 0.5s ease-out;">
             <i class="fas fa-check-circle mr-2"></i> ✅ Export berhasil! ${allData.length} items telah di-export.
           </div>
         `;
         
-        //  HAPUS NOTIFICATION SETELAH 3 DETIK
         setTimeout(() => {
           if (document.getElementById('exportNotification')) {
             document.body.removeChild(notification);
@@ -1616,7 +1627,6 @@
       } catch (error) {
         console.error('❌ Error saat export Excel:', error);
         
-        //  TAMPILKAN ERROR NOTIFICATION
         const errorNotif = document.createElement('div');
         errorNotif.innerHTML = `
           <div style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4); z-index: 9999; font-weight: bold;">
@@ -1633,23 +1643,16 @@
       }
     }
 
-    // LOGOUT (TANPA POP UP KONFIRMASI)
     function logout() {
       window.location.href = 'login.html';
     }
 
-    //  ✅ FIX #5: INIT ON PAGE LOAD - PERBAIKAN UTAMA
     window.onload = function() {
       console.log('🚀 Initializing Admin Panel...');
       
-      //  Load kategori dropdown
       loadCategories();
-      
-      //  Load dashboard (default tab aktif)
       loadDashboardData();
       
-      //  ✅ TIDAK AUTO-LOAD DATA LAGI - Biarkan user klik "Tampilkan Data" manual
-      //  Ini mencegah data dimuat 2x dan memastikan user control
       console.log('✅ Admin Panel ready. Click "Tampilkan Data" to load items.');
     };
   </script>
