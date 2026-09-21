@@ -734,7 +734,7 @@
   </div>
 
   <script>
-    const BASE_URL = "https://script.google.com/macros/s/AKfycbylLLA5XPvaWr_DUwwFWpLM9AF53lODzo6ectqrjy7EbslGgpd2m7QgWKSVSku56j6KMA/exec";
+    const BASE_URL = "https://script.google.com/macros/s/AKfycbw89_rvk5aC5dBOw_panche-P127RiqyO2FPKc7X0FqOZsipBmZsyKVq8oBRRPLQ1cswQ/exec";
     
     let currentCategory = "";
     let currentStatus = "";
@@ -1490,6 +1490,7 @@
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({
             action: 'updateitemstatus',
+            row_number: item.row_number,  // FIX BARU: identifier unik per baris, atasi bug duplikat
             ticket_id: item.ticket_id,
             item_id: formattedItemId,  // 🔥 USE FORMATTED VERSION
             status: newStatus,

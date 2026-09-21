@@ -318,8 +318,32 @@
 
 </div>
 
+<!-- MODAL KONFIRMASI ITEM DUPLIKAT (inline, bukan browser confirm) -->
+<div id="duplicateModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+        <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-gray-800">Item Sudah Ada di List</h3>
+        <p class="text-sm text-gray-500">Gabungkan quantity-nya?</p>
+      </div>
+    </div>
+    <p class="text-gray-700 mb-6 font-medium" id="duplicateModalText"></p>
+    <div class="flex gap-3">
+      <button onclick="cancelDuplicateMerge()" class="flex-1 py-3 rounded-xl border-2 border-gray-200 font-bold text-gray-600 hover:bg-gray-50 transition-all">
+        Batal
+      </button>
+      <button onclick="confirmDuplicateMerge()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold hover:shadow-xl transition-all">
+        <i class="fas fa-check mr-2"></i>Gabungkan
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
-const BASE_URL = 'https://script.google.com/macros/s/AKfycbyvJsb99y4JNT9O85k0S2j4ZV0RFhP8EQZ7qUb0PO8Ck4wazIioWTDflU0hCT_ZvmIDjQ/exec';
+const BASE_URL = 'https://script.google.com/macros/s/AKfycbw89_rvk5aC5dBOw_panche-P127RiqyO2FPKc7X0FqOZsipBmZsyKVq8oBRRPLQ1cswQ/exec';
 const store_code = localStorage.getItem("store_code");
 const store_name = localStorage.getItem("store_name");
 
@@ -334,6 +358,40 @@ if (store_name) {
 
 let items = [];
 let selectedItems = [];
+let pendingDuplicate = null; // FIX: nyimpen data sementara pas modal duplikat item muncul
+
+function confirmDuplicateMerge() {
+  if (pendingDuplicate) {
+    const { existingIdx, qty, input } = pendingDuplicate;
+    selectedItems[existingIdx].qty = Number(selectedItems[existingIdx].qty) + Number(qty);
+    renderTable();
+    resetAddItemForm(input);
+  }
+  closeDuplicateModal();
+}
+
+function cancelDuplicateMerge() {
+  if (pendingDuplicate) {
+    resetAddItemForm(pendingDuplicate.input);
+  }
+  closeDuplicateModal();
+}
+
+function closeDuplicateModal() {
+  document.getElementById("duplicateModal").classList.add("hidden");
+  document.getElementById("duplicateModal").classList.remove("flex");
+  pendingDuplicate = null;
+}
+
+function resetAddItemForm(input) {
+  input.value = "";
+  input.dataset.itemId = "";
+  input.dataset.category = "";
+  input.dataset.status = "";
+  document.getElementById("qty").value = "";
+  document.getElementById("remarks").value = "";
+  input.focus();
+}
 
 async function loadItems() {
   try {
@@ -416,6 +474,19 @@ function addItem() {
   
   if (!qty || qty <= 0) {
     alert("⚠ Masukkan jumlah quantity yang valid!");
+    return;
+  }
+
+  // FIX: cek kalau item ini sudah ada di list, tampilkan modal inline (bukan browser confirm)
+  // supaya konsisten muncul di semua browser/hosting
+  const existingIdx = selectedItems.findIndex(it => it.item_id === item_id);
+  if (existingIdx !== -1) {
+    pendingDuplicate = { existingIdx, qty, input };
+    const newQtyPreview = Number(selectedItems[existingIdx].qty) + Number(qty);
+    document.getElementById("duplicateModalText").innerText =
+      `Item "${item_name}" sudah ada di list dengan qty ${selectedItems[existingIdx].qty}. Gabungkan menjadi ${newQtyPreview}?`;
+    document.getElementById("duplicateModal").classList.remove("hidden");
+    document.getElementById("duplicateModal").classList.add("flex");
     return;
   }
   
